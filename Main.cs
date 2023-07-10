@@ -51,6 +51,11 @@ class Program
         var services = new ServiceCollection();
         services.AddSingleton<GuildData>();
         services.AddSingleton<DiscordSocketClient>(_ => _client);
+        services.AddSingleton<TriggerMapper>();
+        services.AddSingleton<CommandMapper>();
+
+        services.AddSingleton<CommandService>(_ => _commands);
+
         return services.BuildServiceProvider();
     }
 
@@ -85,8 +90,8 @@ class Program
         await _client.LoginAsync(TokenType.Bot, GlobalConfiguration.Instance.AuthenticationToken);
         await _client.StartAsync();
 
-        // Centralize the logic for commands into a separate method.
-        await new CommandHandler(_client, _commands, _services).InstallCommandsAsync();
+        await _services.GetRequiredService<CommandMapper>().MapCommands();
+
         // Wait infinitely so your bot actually stays connected.
         await Task.Delay(Timeout.Infinite);
     }

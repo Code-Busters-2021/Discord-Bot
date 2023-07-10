@@ -1,6 +1,8 @@
 using Discord;
 using Discord.WebSocket;
 
+#pragma warning disable CS8618
+
 public class GuildData
 {
 
@@ -16,16 +18,19 @@ public class GuildData
     public ulong GuildId => _guild.Id;
 
 
+    public IRole DiamondRole;
     public IRole GoldRole;
     public IRole SilverRole;
     public IRole BronzeRole;
-    public IRole DiamondRole;
     private void ExtractRoles()
     {
         foreach (IRole role in _guild.Roles)
         {
             switch (role.Name)
             {
+                case "Diamond":
+                    DiamondRole = role;
+                    break;
                 case "Gold":
                     GoldRole = role;
                     break;
@@ -34,9 +39,6 @@ public class GuildData
                     break;
                 case "Bronze":
                     BronzeRole = role;
-                    break;
-                case "Diamond":
-                    DiamondRole = role;
                     break;
             }
         }
@@ -51,3 +53,5 @@ public class GuildData
         }
     }
 }
+
+#pragma warning restore CS8618
