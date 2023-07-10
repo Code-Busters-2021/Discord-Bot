@@ -1,5 +1,8 @@
 using Discord.WebSocket;
 using Discord.Commands;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Reflection;
 
 // Handles the logic for receiving message and executing the appropriate command

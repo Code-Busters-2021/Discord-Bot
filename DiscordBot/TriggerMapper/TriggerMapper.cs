@@ -1,6 +1,7 @@
 using Discord.WebSocket;
-using Discord.Commands;
-using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public delegate Task Trigger(SocketMessageComponent component);
 
@@ -16,6 +17,7 @@ public class TriggerMapper
         _client = client;
         _services = services;
         MapEvents();
+        TriggerAttribute.ExtractTriggers(this);
     }
 
     private Dictionary<string, Trigger> _buttonTriggers = new();

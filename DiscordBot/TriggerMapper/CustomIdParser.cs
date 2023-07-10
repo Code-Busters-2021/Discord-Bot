@@ -1,3 +1,5 @@
+using System.Linq;
+
 // CustomId is string that is passed into components such as Buttons or SelectMenus.
 // We build the CustomId by concatenating all the arguments needed to understand what needs
 // to be done when that component is triggered

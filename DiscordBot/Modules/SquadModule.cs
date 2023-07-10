@@ -34,7 +34,7 @@ public class CommandsModule : ModuleBase<SocketCommandContext>
         await ReplyAsync($"Quel squad pour {user.Mention}?", components: component);
     }
 
-    
+    [Trigger(TriggerType.SelectMenu, "setsquad")]
     public async Task SetSquad(SocketMessageComponent component)
     {
         if (!component.GuildId.HasValue)
