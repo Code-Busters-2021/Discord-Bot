@@ -1,22 +1,25 @@
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Core;
+using DiscordBot.TriggerMapper;
 
-public class CommandsModule : ModuleBase<SocketCommandContext>
+namespace DiscordBot.Journeys;
+
+public class CommandsJourney : JourneyBase
 {
     public const string SetSquadId = "setsquad";
 
 
     private readonly DiscordSocketClient _client;
-    private GuildData _guildData;
+    private readonly GuildData _guildData;
 
-    public CommandsModule(DiscordSocketClient client,
-            GuildData guildData,
-            TriggerMapper triggerMapper)
+    public CommandsJourney(DiscordSocketClient client,
+        GuildData guildData,
+        TriggerMapper.TriggerMapper mapper) : base(mapper)
     {
         _client = client;
         _guildData = guildData;
-        triggerMapper.AddButtonTrigger(SetSquadId, SetSquad);
     }
 
     [Command("squad")]
@@ -25,16 +28,17 @@ public class CommandsModule : ModuleBase<SocketCommandContext>
         [Summary("The user to get info from")] SocketGuildUser user)
     {
         if (user == null) throw new Exception("not working");
-        var squads = _guildData.GetSquads();
+        var squads = _guildData.GetSquads().ToList();
         await user.RemoveRolesAsync(squads);
 
-        var component = new ComponentBuilder()
-            .WithSelectMenu($"{SetSquadId}-{user.Id}", squads.Select(s => new SelectMenuOptionBuilder(s.Name, $"{s.Id}")).ToList())
+        var component = new ComponentBuilder().WithSelectMenu(
+                CustomId.Build(SetSquadId, user.Id.ToString()),
+                squads.Select(s => new SelectMenuOptionBuilder(s.Name, $"{s.Id}")).ToList())
             .Build();
         await ReplyAsync($"Quel squad pour {user.Mention}?", components: component);
     }
 
-    [Trigger(TriggerType.SelectMenu, "setsquad")]
+    [Trigger(TriggerType.SelectMenu, SetSquadId)]
     public async Task SetSquad(SocketMessageComponent component)
     {
         if (!component.GuildId.HasValue)
@@ -42,9 +46,10 @@ public class CommandsModule : ModuleBase<SocketCommandContext>
             await component.Channel.SendMessageAsync("You can only do this in a channel");
             return;
         }
-        var arguments = component.Data.CustomId.Split('-');
+
+        var (triggerId, arguments) = CustomId.Parse(component.Data.CustomId);
         var guild = _client.GetGuild(component.GuildId.Value);
-        var guildUser = guild.GetUser(ulong.Parse(arguments[1]));
+        var guildUser = guild.GetUser(ulong.Parse(arguments[0]));
 
         var squadId = component.Data.Values.First();
         var squad = guild.GetRole(ulong.Parse(squadId));
@@ -53,12 +58,5 @@ public class CommandsModule : ModuleBase<SocketCommandContext>
 
         await component.RespondAsync($"{guildUser.Mention} a été ajouté.e à {squad.Name}");
         await component.Channel.DeleteMessageAsync(component.Message.Id);
-    }
-
-    [Command("error")]
-    [Summary("Generate an error")]
-    public Task ErrorAsync()
-    {
-        throw new Exception("Successful error");
     }
 }

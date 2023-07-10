@@ -1,11 +1,11 @@
-using Discord.WebSocket;
-using Discord.Commands;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Reflection;
+using Discord.Commands;
+using Discord.WebSocket;
+using DiscordBot.TriggerMapper;
 
 // Handles the logic for receiving message and executing the appropriate command
+namespace DiscordBot.Core;
+
 public class CommandMapper
 {
     private readonly DiscordSocketClient _client;
@@ -31,7 +31,8 @@ public class CommandMapper
 
         // Map all commands contained within the assembly
         _client.Ready += async () => await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                        services: _services);
+            services: _services);
+
         return Task.CompletedTask;
     }
 

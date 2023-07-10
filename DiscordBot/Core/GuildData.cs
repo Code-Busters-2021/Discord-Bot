@@ -1,8 +1,9 @@
-using System.Linq;
 using Discord;
 using Discord.WebSocket;
 
 #pragma warning disable CS8618
+
+namespace DiscordBot.Core;
 
 public class GuildData
 {

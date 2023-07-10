@@ -1,7 +1,6 @@
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
+namespace DiscordBot.TriggerMapper;
 
 public delegate Task Trigger(SocketMessageComponent component);
 
@@ -17,36 +16,34 @@ public class TriggerMapper
         _client = client;
         _services = services;
         MapEvents();
-        TriggerAttribute.ExtractTriggers(this);
     }
 
-    private Dictionary<string, Trigger> _buttonTriggers = new();
+    private readonly Dictionary<string, Trigger> _buttonTriggers = new();
     public void AddButtonTrigger(string triggerId, Trigger trigger)
     {
         _buttonTriggers.TryAdd(triggerId, trigger);
     }
 
-    private Dictionary<string, Trigger> _selectMenuTriggers = new();
+    private readonly Dictionary<string, Trigger> _selectMenuTriggers = new();
     public void AddSelectMenuTrigger(string triggerId, Trigger trigger)
     {
         _selectMenuTriggers.TryAdd(triggerId, trigger);
     }
 
-    private Task MapEvents()
+    private void MapEvents()
     {
         // Hook the events into our triggers
         _client.ButtonExecuted += HandleButtonAsync;
         _client.SelectMenuExecuted += HandleSelectMenuAsync;
-        return Task.CompletedTask;
     }
 
 
     private async Task HandleButtonAsync(SocketMessageComponent component)
     {
-        var componentId = component.Data.CustomId ?? throw new Exception("ComponentId is null");
-        var triggerId = GetTriggerId(componentId);
+        var customId = component.Data.CustomId ?? throw new Exception("ComponentId is null");
+        var triggerId = CustomId.GetTriggerId(customId);
 
-        if (_buttonTriggers.TryGetValue(triggerId, out Trigger? trigger))
+        if (_buttonTriggers.TryGetValue(triggerId, out var trigger))
             await trigger.Invoke(component);
         else
             throw new Exception($"TriggerId not recognized: {triggerId}");
@@ -54,14 +51,12 @@ public class TriggerMapper
 
     private async Task HandleSelectMenuAsync(SocketMessageComponent component)
     {
-        var componentId = component.Data.CustomId ?? throw new Exception("ComponentId is null");
-        var triggerId = GetTriggerId(componentId);
+        var customId = component.Data.CustomId ?? throw new Exception("ComponentId is null");
+        var triggerId = CustomId.GetTriggerId(customId);
 
-        if (_buttonTriggers.TryGetValue(triggerId, out Trigger? trigger))
+        if (_selectMenuTriggers.TryGetValue(triggerId, out var trigger))
             await trigger.Invoke(component);
         else
             throw new Exception($"TriggerId not recognized: {triggerId}");
     }
-
-    private string GetTriggerId(string componentId) => componentId. Split('-').First();
 }

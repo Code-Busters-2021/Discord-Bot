@@ -1,10 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Core;
 
-class Program
+namespace DiscordBot;
+
+public class Program
 {
     // Program entry point
     static Task Main(string[] args)
@@ -21,7 +22,7 @@ class Program
     private readonly CommandService _commands;
     private readonly IServiceProvider _services;
 
-    private Program()
+    public Program()
     {
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
@@ -52,7 +53,7 @@ class Program
         var services = new ServiceCollection();
         services.AddSingleton<GuildData>();
         services.AddSingleton<DiscordSocketClient>(_ => _client);
-        services.AddSingleton<TriggerMapper>();
+        services.AddSingleton<TriggerMapper.TriggerMapper>();
         services.AddSingleton<CommandMapper>();
 
         services.AddSingleton<CommandService>(_ => _commands);

@@ -1,3 +1,5 @@
+namespace DiscordBot.TriggerMapper;
+
 public enum TriggerType
 {
     None,
