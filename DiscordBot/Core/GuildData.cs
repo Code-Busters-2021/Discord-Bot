@@ -5,16 +5,14 @@ using Discord.WebSocket;
 
 namespace DiscordBot.Core;
 
+// Handles data extracted from the codebusters guild
 public class GuildData
 {
-
-    private readonly DiscordSocketClient _client;
     private readonly SocketGuild _guild;
 
     public GuildData(DiscordSocketClient client)
     {
-        _client = client;
-        _guild = _client.Guilds.Where(guild => guild.Name == GlobalConfiguration.Instance.GuildName).First();
+        _guild = client.Guilds.First(guild => guild.Name == GlobalConfiguration.Instance.GuildName);
         ExtractRoles();
     }
     public ulong GuildId => _guild.Id;
