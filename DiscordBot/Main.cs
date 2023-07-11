@@ -2,13 +2,14 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Core;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace DiscordBot;
 
 public class Program
 {
     // Program entry point
-    static Task Main(string[] args)
+    static Task Main()
     {
         // Call the Program constructor, followed by the 
         // MainAsync method and wait until it finishes (which should be never).
@@ -21,9 +22,12 @@ public class Program
     // These two types require you install the Discord.Net.Commands package.
     private readonly CommandService _commands;
     private readonly IServiceProvider _services;
+    private IConfiguration _configuration;
 
     public Program()
     {
+        _configuration = Configuration.BuildConfiguration();
+
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
             LogLevel = LogSeverity.Info,
@@ -51,11 +55,14 @@ public class Program
     private IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-        services.AddSingleton<GuildData>();
+
         services.AddSingleton<DiscordSocketClient>(_ => _client);
+        services.AddSingleton(_configuration);
+
+        services.AddSingleton<GuildData>();
+
         services.AddSingleton<TriggerMapper.TriggerMapper>();
         services.AddSingleton<CommandMapper>();
-
         services.AddSingleton<CommandService>(_ => _commands);
 
         return services.BuildServiceProvider();
@@ -89,7 +96,7 @@ public class Program
     private async Task MainAsync()
     {
         // Login and connect.
-        await _client.LoginAsync(TokenType.Bot, GlobalConfiguration.Instance.AuthenticationToken);
+        await _client.LoginAsync(TokenType.Bot, _configuration["BotToken"]);
         await _client.StartAsync();
 
         await _services.GetRequiredService<CommandMapper>().MapCommands();

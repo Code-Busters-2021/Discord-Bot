@@ -9,7 +9,7 @@ public static class CustomId
 {
     public static string Build(string triggerId, params string[] arguments)
     {
-        return string.Concat(arguments.Prepend(triggerId), '-');
+        return string.Join('-', arguments.Prepend(triggerId));
     }
 
     public static (string, string[]) Parse(string customId)

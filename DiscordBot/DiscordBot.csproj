@@ -5,6 +5,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="Discord.Net" Version="3.10.0" />
+        <PackageReference Include="Discord.Net" Version="3.10.0" />
     </ItemGroup>
+    <Target Name="CopyFiles">
+        <Copy SourceFiles="appsettings.Development.json.template" DestinationFiles="/home/hedi/Desktop/test.json" />
+        <Message Text="copied" />
+    </Target>
 </Project>

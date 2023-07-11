@@ -3,3 +3,4 @@ obj/
 .vscode/
 .idea/
 out/
+**/configuration.Debug.json

@@ -10,22 +10,23 @@ public class GuildData
 {
     private readonly SocketGuild _guild;
 
-    public GuildData(DiscordSocketClient client)
-    {
-        _guild = client.Guilds.First(guild => guild.Name == GlobalConfiguration.Instance.GuildName);
-        ExtractRoles();
-    }
-    public ulong GuildId => _guild.Id;
-
-
+    public IRole BronzeRole;
     public IRole DiamondRole;
     public IRole GoldRole;
     public IRole SilverRole;
-    public IRole BronzeRole;
+
+    public GuildData(DiscordSocketClient client, IConfiguration configuration)
+    {
+        _guild = client.Guilds.First(guild =>
+            guild.Name == configuration[$"GuildData:Name:{configuration["Environment"]}"]);
+        ExtractRoles();
+    }
+
+    public ulong GuildId => _guild.Id;
+
     private void ExtractRoles()
     {
         foreach (IRole role in _guild.Roles)
-        {
             switch (role.Name)
             {
                 case "Diamond":
@@ -41,16 +42,13 @@ public class GuildData
                     BronzeRole = role;
                     break;
             }
-        }
     }
 
     public IEnumerable<IRole> GetSquads()
     {
         foreach (IRole role in _guild.Roles)
-        {
             if (role.Name.ToLower().Contains("squad"))
                 yield return role;
-        }
     }
 }
 
