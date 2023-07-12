@@ -6,7 +6,7 @@ using DiscordBot.TriggerMapper;
 
 namespace DiscordBot.Journeys;
 
-public class CommandsJourney : JourneyBase
+public class CommandsJourney : JourneyBase<CommandContext>
 {
     public const string SetSquadId = "setsquad";
 
@@ -38,7 +38,7 @@ public class CommandsJourney : JourneyBase
         await ReplyAsync($"Quel squad pour {user.Mention}?", components: component);
     }
 
-    [Trigger(TriggerType.SelectMenu, SetSquadId)]
+    [Trigger(SetSquadId)]
     public async Task SetSquad(SocketMessageComponent component)
     {
         if (!component.GuildId.HasValue)
@@ -47,7 +47,7 @@ public class CommandsJourney : JourneyBase
             return;
         }
 
-        var (triggerId, arguments) = CustomId.Parse(component.Data.CustomId);
+        var (_, arguments) = CustomId.Parse(component.Data.CustomId);
         var guild = _client.GetGuild(component.GuildId.Value);
         var guildUser = guild.GetUser(ulong.Parse(arguments[0]));
 
@@ -56,7 +56,7 @@ public class CommandsJourney : JourneyBase
 
         await guildUser.AddRoleAsync(squad);
 
-        await component.RespondAsync($"{guildUser.Mention} a été ajouté.e à {squad.Name}");
+        await component.Channel.SendMessageAsync($"{guildUser.Mention} a été ajouté.e à {squad.Name}");
         await component.Channel.DeleteMessageAsync(component.Message.Id);
     }
 }

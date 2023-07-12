@@ -5,7 +5,8 @@ using DiscordBot.TriggerMapper;
 
 namespace DiscordBot.Journeys;
 
-public abstract class JourneyBase : ModuleBase<SocketCommandContext>
+public abstract class JourneyBase<T> : ModuleBase<T>
+    where T : class, ICommandContext
 {
     protected JourneyBase(TriggerMapper.TriggerMapper mapper)
     {
@@ -15,22 +16,34 @@ public abstract class JourneyBase : ModuleBase<SocketCommandContext>
             var trigger = method.GetCustomAttribute<TriggerAttribute>();
             if (trigger == null) continue;
 
-
-            switch (trigger.Type)
+            if (HaveSameSignature(method, typeof(ComponentTrigger)))
             {
-                case TriggerType.Button:
-                case TriggerType.SelectMenu:
+                async Task InvokeTrigger(SocketMessageComponent component)
+                {
+                    await (Task)method.Invoke(this, new object?[] { component })!;
+                }
 
-                    async Task InvokeTrigger(SocketMessageComponent component)
-                    {
-                        await (Task)method.Invoke(this, new object?[] { component })!;
-                    }
+                mapper.AddComponentTrigger(trigger.TriggerId, InvokeTrigger);
+            }
+            else if (HaveSameSignature(method, typeof(ModalTrigger)))
+            {
+                async Task InvokeTrigger(SocketModal modal)
+                {
+                    await (Task)method.Invoke(this, new object?[] { modal })!;
+                }
 
-                    mapper.AddTrigger(trigger.TriggerId, InvokeTrigger);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException($"TriggerType is not handled: {trigger.Type}");
+                mapper.AddModalTrigger(trigger.TriggerId, InvokeTrigger);
+            }
+            else
+            {
+                throw new Exception($"Method marked as Trigger, but signature was not recognized: {method.Name}");
             }
         }
+    }
+
+    private static bool HaveSameSignature(MethodBase method, Type delegateType)
+    {
+        return method.GetParameters().Select(p => p.ParameterType)
+            .SequenceEqual(delegateType.GetMethod("Invoke")!.GetParameters().Select(p => p.ParameterType));
     }
 }

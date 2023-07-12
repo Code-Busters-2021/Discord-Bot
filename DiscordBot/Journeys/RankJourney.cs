@@ -6,7 +6,7 @@ using DiscordBot.TriggerMapper;
 
 namespace DiscordBot.Journeys;
 
-public class RankJourney : JourneyBase
+public class RankJourney : JourneyBase<CommandContext>
 {
     private const string SetRankId = "setrank";
 
@@ -21,16 +21,9 @@ public class RankJourney : JourneyBase
         _guildData = guildData;
     }
 
-    [Command("rank")]
-    [Summary("Set rank for a user")]
-    public async Task RankAsync(
-        [Summary("The user to get info from")] SocketGuildUser user)
+    public MessageComponent GetRankChoiceComponent(SocketGuildUser user)
     {
-        if (user == null) throw new Exception("User was null");
-        await user.RemoveRolesAsync(new[]
-            { _guildData.BronzeRole, _guildData.SilverRole, _guildData.GoldRole, _guildData.DiamondRole });
-
-        var component = new ComponentBuilder()
+        return new ComponentBuilder()
             .WithButton("Bronze", CustomId.Build(SetRankId, user.Id.ToString(), "bronze"),
                 ButtonStyle.Primary, Emoji.Parse(":key:"))
             .WithButton("Silver", CustomId.Build(SetRankId, user.Id.ToString(), "silver"),
@@ -40,10 +33,22 @@ public class RankJourney : JourneyBase
             .WithButton("Diamond", CustomId.Build(SetRankId, user.Id.ToString(), "diamond"),
                 ButtonStyle.Primary, Emoji.Parse(":gem:"))
             .Build();
-        await ReplyAsync($"Quel rang pour {user.Mention}?", components: component);
     }
 
-    [Trigger(TriggerType.Button, SetRankId)]
+    [Command("rank")]
+    [Summary("Set rank for a user")]
+    public async Task RankAsync(
+        [Summary("The user to get info from")] SocketGuildUser user)
+    {
+        if (user == null) throw new Exception("User was null");
+        await user.RemoveRolesAsync(new[]
+            { _guildData.BronzeRole, _guildData.SilverRole, _guildData.GoldRole, _guildData.DiamondRole });
+        
+        await ReplyAsync($"Quel rang pour {user.Mention}?", components: GetRankChoiceComponent(user));
+    }
+
+
+    [Trigger(SetRankId)]
     public async Task SetRank(SocketMessageComponent component)
     {
         if (!component.GuildId.HasValue)
@@ -52,7 +57,7 @@ public class RankJourney : JourneyBase
             return;
         }
 
-        var (triggerId, arguments) = CustomId.Parse(component.Data.CustomId);
+        var (_, arguments) = CustomId.Parse(component.Data.CustomId);
         var guildUser = _client.GetGuild(component.GuildId.Value)
             .GetUser(ulong.Parse(arguments[0]));
 

@@ -20,6 +20,6 @@ public static class CustomId
 
     public static string GetTriggerId(string customId)
     {
-        return customId.Substring(0, customId.IndexOf('-'));
+        return customId[..customId.IndexOf('-')];
     }
 }

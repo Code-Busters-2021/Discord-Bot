@@ -1,6 +1,8 @@
 using System.Reflection;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Journeys.UserJoined;
 
 // Handles the logic for receiving message and executing the appropriate command
 namespace DiscordBot.Core;
@@ -21,13 +23,20 @@ public class CommandMapper
     public Task MapCommands()
     {
         _client.MessageReceived += HandleCommandAsync;
-
+        // _client.UserJoined += HandleUserJoinedAsync;
+        
         // Map all commands contained within the assembly
         _client.Ready += async () => await _commands.AddModulesAsync(Assembly.GetEntryAssembly(),
             _services);
 
         return Task.CompletedTask;
     }
+
+    // private async Task HandleUserJoinedAsync(SocketGuildUser user)
+    // {
+    //     var message =  await user.SendMessageAsync($"Bienvenue sur le Discord Codebusters!");
+    //     await _commands.ExecuteAsync(new CommandContext(_client, message!), UserJoinedJourneyBase.UserJoinedCommand, _services);
+    // }
 
     private async Task HandleCommandAsync(SocketMessage messageParam)
     {
@@ -46,7 +55,7 @@ public class CommandMapper
             message.HasMentionPrefix(_client.CurrentUser, ref argPos))
         {
             // Create a WebSocket-based command context based on the message
-            var context = new SocketCommandContext(_client, message);
+            var context = new CommandContext(_client, message);
 
             // Execute the command with the command context we just
             // created, along with the service provider.
