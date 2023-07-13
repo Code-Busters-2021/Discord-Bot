@@ -1,4 +1,4 @@
-namespace DiscordBot.TriggerMapper;
+namespace DiscordBot.Modules;
 
 // CustomId is string that is passed into components such as Buttons or SelectMenus.
 // We build the CustomId by concatenating all the arguments needed to understand what needs
@@ -16,10 +16,5 @@ public static class CustomId
     {
         var strings = customId.Split('-');
         return (strings.First(), strings.Skip(1).ToArray());
-    }
-
-    public static string GetTriggerId(string customId)
-    {
-        return customId[..customId.IndexOf('-')];
     }
 }

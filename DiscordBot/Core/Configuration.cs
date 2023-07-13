@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration.Json;
 
-namespace DiscordBot;
+namespace DiscordBot.Core;
 
 public static class Configuration
 {

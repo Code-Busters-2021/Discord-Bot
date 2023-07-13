@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
 using Microsoft.Extensions.Configuration.Json;
@@ -61,9 +62,8 @@ public class Program
 
         services.AddSingleton<GuildData>();
 
-        services.AddSingleton<TriggerMapper.TriggerMapper>();
-        services.AddSingleton<CommandMapper>();
-        services.AddSingleton<CommandService>(_ => _commands);
+        services.AddSingleton<InteractionService>();
+        services.AddSingleton<InteractionMapper>();
 
         return services.BuildServiceProvider();
     }
@@ -99,7 +99,7 @@ public class Program
         await _client.LoginAsync(TokenType.Bot, _configuration["BotToken"]);
         await _client.StartAsync();
 
-        await _services.GetRequiredService<CommandMapper>().MapCommands();
+        await _services.GetRequiredService<InteractionMapper>().MapCommands();
 
         // Wait infinitely so your bot actually stays connected.
         await Task.Delay(Timeout.Infinite);

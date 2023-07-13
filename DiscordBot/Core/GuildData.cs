@@ -8,25 +8,27 @@ namespace DiscordBot.Core;
 // Handles data extracted from the codebusters guild
 public class GuildData
 {
-    private readonly SocketGuild _guild;
-
-    public IRole BronzeRole;
-    public IRole DiamondRole;
-    public IRole GoldRole;
-    public IRole SilverRole;
+    public readonly SocketGuild Guild;
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration)
     {
-        _guild = client.Guilds.First(guild =>
+        Guild = client.Guilds.First(guild =>
             guild.Name == configuration[$"GuildData:Name:{configuration["Environment"]}"]);
         ExtractRoles();
     }
 
-    public ulong GuildId => _guild.Id;
+    public IRole ManagerRole { get; private set; }
+    public IRole DiamondRole { get; private set; }
+    public IRole GoldRole { get; private set; }
+    public IRole SilverRole { get; private set; }
+    public IRole BronzeRole { get; private set; }
+
+    public List<IRole> Squads { get; private set; }
 
     private void ExtractRoles()
     {
-        foreach (IRole role in _guild.Roles)
+        UpdateSquads();
+        foreach (IRole role in Guild.Roles)
             switch (role.Name)
             {
                 case "Diamond":
@@ -41,14 +43,18 @@ public class GuildData
                 case "Bronze":
                     BronzeRole = role;
                     break;
+                case "Manager":
+                    ManagerRole = role;
+                    break;
             }
     }
 
-    public IEnumerable<IRole> GetSquads()
+    public void UpdateSquads()
     {
-        foreach (IRole role in _guild.Roles)
+        Squads = new List<IRole>();
+        foreach (IRole role in Guild.Roles)
             if (role.Name.ToLower().Contains("squad"))
-                yield return role;
+                Squads.Add(role);
     }
 }
 
