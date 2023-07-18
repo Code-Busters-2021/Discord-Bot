@@ -23,13 +23,15 @@ public class InteractionMapper
 
     public Task MapCommands()
     {
-        //_client.MessageReceived += HandleCommandAsync;
         _client.InteractionCreated += HandleInteraction;
+
 
         // Map all commands contained within the assembly
         _client.Ready += async () =>
         {
             await _client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
+            await _services.GetRequiredService<GuildData>().Guild.DeleteApplicationCommandsAsync();
+
             await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
             await _interactionService.RegisterCommandsGloballyAsync();
         };
@@ -60,37 +62,4 @@ public class InteractionMapper
                 await interaction.GetOriginalResponseAsync().ContinueWith(async msg => await msg.Result.DeleteAsync());
         }
     }
-
-    // private async Task HandleCommandAsync(SocketMessage messageParam)
-    // {
-    //     // Don't process the command if it was a system message
-    //     var message = messageParam as SocketUserMessage;
-    //     if (message == null) return;
-    //
-    //     // We don't want the bot to respond to itself or other bots.
-    //     if (message.Author.IsBot) return;
-    //
-    //     // Create a number to track where the prefix ends and the command begins
-    //     var argPos = 0;
-    //
-    //     // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-    //     if (message.HasStringPrefix("!", ref argPos) ||
-    //         message.HasMentionPrefix(_client.CurrentUser, ref argPos))
-    //     {
-    //         // Create a WebSocket-based command context based on the message
-    //         var context = new CommandContext(_client, message);
-    //
-    //         // Execute the command with the command context we just
-    //         // created, along with the service provider.
-    //         var result = await _commands.ExecuteAsync(
-    //             context,
-    //             argPos,
-    //             _services);
-    //
-    //         // This does not catch errors from commands with 'RunMode.Async',
-    //         // subscribe a handler for '_commands.CommandExecuted' to see those.
-    //         if (!result.IsSuccess)
-    //             await message.Channel.SendMessageAsync(result.ErrorReason);
-    //     }
-    // }
 }

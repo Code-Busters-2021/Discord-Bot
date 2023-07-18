@@ -27,9 +27,9 @@ public class PostMessageModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction($"{PostMessageId}-*")]
     public async Task PostMessage(string channelId, PostMessageModal modal)
     {
-        await _guildData.Guild.GetTextChannel(ulong.Parse(channelId))
-            .SendMessageAsync(modal.Contenu);
-        await RespondAsync();
+        var textChannel = _guildData.Guild.GetTextChannel(ulong.Parse(channelId));
+        await textChannel.SendMessageAsync(modal.Contenu);
+        await RespondAsync($"Le message a été posté sur le channel {textChannel.Name}");
     }
 
     public class ChannelAutocompleteHandler : AutocompleteHandler

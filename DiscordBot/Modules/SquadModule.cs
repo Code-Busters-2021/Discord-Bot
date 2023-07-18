@@ -2,6 +2,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
+using DiscordBot.Modules.AutocompleteHandlers;
 
 namespace DiscordBot.Modules;
 
@@ -18,57 +19,49 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
         _guildData = guildData;
     }
 
-    public MessageComponent GetSquadChoiceComponent(SocketGuildUser user)
-    {
-        return new ComponentBuilder()
-            .WithSelectMenu(
-                CustomId.Build(SetSquadId, user.Id.ToString()),
-                _guildData.Squads.Select(s => new SelectMenuOptionBuilder(s.Name, $"{s.Id}")).ToList())
-            .WithButton(
-                "Add a new squad",
-                CustomId.Build(InputSquadId, user.Id.ToString()))
-            .Build();
-    }
-
     [SlashCommand("squad", "Set squad for a user")]
-    public async Task SquadAsync(
-        SocketUser user)
+    public async Task SquadAsync(SocketUser user,
+        [Autocomplete(typeof(SquadAutocompleteHandler))]
+        string squadId)
     {
-        if (user is SocketGuildUser guildUser)
-        {
-            if (guildUser.GuildPermissions.Administrator)
-                await RespondAsync("You cannot assign a squad to this user");
-            else
-                await RespondAsync($"Quel squad pour {user.Mention}?", components: GetSquadChoiceComponent(guildUser));
-        }
-        else
+        if (user is not SocketGuildUser guildUser)
         {
             await RespondAsync("You need to be in the server to use this command");
+            return;
         }
-    }
 
-    [ComponentInteraction($"{SetSquadId}-*")]
-    public async Task SetSquad(string userId, string squadId)
-    {
-        await Context.Channel.DeleteMessageAsync(((IComponentInteraction)Context.Interaction).Message);
+        if (guildUser.GuildPermissions.Administrator)
+        {
+            await RespondAsync("You cannot assign a rank to an admin user");
+            return;
+        }
 
-        var guild = Context.Guild;
-        var guildUser = guild.GetUser(ulong.Parse(userId));
+        if (guildUser.Roles.Any(role => role.Id == _guildData.ManagerRole.Id))
+        {
+            await RespondAsync("You cannot assign a rank to a Manager");
+            return;
+        }
 
-        var squad = guild.GetRole(ulong.Parse(squadId));
+        if (squadId == "")
+        {
+            await RespondWithModalAsync<AddSquadModal>($"{CreateSquadId}-{user.Id}");
+            return;
+        }
+
+        var squad = Context.Guild.GetRole(ulong.Parse(squadId));
 
         await guildUser.RemoveRolesAsync(_guildData.Squads);
 
         await guildUser.AddRoleAsync(squad);
 
-        await ReplyAsync($"{guildUser.Mention} a été ajouté.e à {squad.Name}");
+        await RespondAsync($"{guildUser.Mention} est maintenant membre de {squad.Name}");
     }
+
 
     [ComponentInteraction($"{InputSquadId}-*")]
     public async Task InputSquad(string userId)
     {
         await Context.Channel.DeleteMessageAsync(((IComponentInteraction)Context.Interaction).Message);
-        await RespondWithModalAsync<AddSquadModal>($"{CreateSquadId}-{userId}");
     }
 
     [ModalInteraction($"{CreateSquadId}-*")]
