@@ -20,7 +20,7 @@ public static class Configuration
         return config.Build();
     }
 
-    public static string GetConfigurationSource(string? environment = null)
+    private static string GetConfigurationSource(string? environment = null)
     {
         var insertStr = string.IsNullOrEmpty(environment) ? "" : "." + environment;
         return Path.Combine(ConfigurationPath, $"configuration{insertStr}.json");

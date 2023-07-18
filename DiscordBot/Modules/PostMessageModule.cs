@@ -18,12 +18,10 @@ public class PostMessageModule : InteractionModuleBase<SocketInteractionContext>
         _client = client;
     }
 
-    public string Title => "Poster un message";
-
     [SlashCommand("post", "Ask the bot to post a message in a channel")]
-    public async Task InputMessage(IChannel channel)
+    public async Task InputMessage([Autocomplete(typeof(ChannelAutocompleteHandler))] string channelId)
     {
-        await RespondWithModalAsync<PostMessageModal>($"{PostMessageId}-{channel.Id}");
+        await RespondWithModalAsync<PostMessageModal>($"{PostMessageId}-{channelId}");
     }
 
     [ModalInteraction($"{PostMessageId}-*")]
@@ -31,8 +29,24 @@ public class PostMessageModule : InteractionModuleBase<SocketInteractionContext>
     {
         await _guildData.Guild.GetTextChannel(ulong.Parse(channelId))
             .SendMessageAsync(modal.Contenu);
+        await RespondAsync();
     }
 
+    public class ChannelAutocompleteHandler : AutocompleteHandler
+    {
+        public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context,
+            IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
+        {
+            // Create a collection with suggestions for autocomplete
+            var results = services.GetRequiredService<GuildData>().PostMessageChannels
+                .Select(channel => new AutocompleteResult(channel.Name, channel.Id.ToString()));
+
+            // max - 25 suggestions at a time (API limit)
+            return Task.FromResult(AutocompletionResult.FromSuccess(results.Take(25)));
+        }
+    }
+
+    // Defines the modal that will be sent.
     public class PostMessageModal : IModal
     {
         // Strings with the ModalTextInput attribute will automatically become components.
@@ -43,6 +57,4 @@ public class PostMessageModule : InteractionModuleBase<SocketInteractionContext>
 
         public string Title => "Poster un message";
     }
-
-    // Defines the modal that will be sent.
 }

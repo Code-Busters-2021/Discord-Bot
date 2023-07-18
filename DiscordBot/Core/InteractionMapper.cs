@@ -1,10 +1,7 @@
 using System.Reflection;
 using Discord;
-using Discord.Commands;
 using Discord.Interactions;
-using Discord.Rest;
 using Discord.WebSocket;
-using Microsoft.VisualBasic;
 
 // Handles the logic for receiving message and executing the appropriate command
 namespace DiscordBot.Core;
@@ -12,11 +9,12 @@ namespace DiscordBot.Core;
 public class InteractionMapper
 {
     private readonly DiscordSocketClient _client;
+
+    private readonly InteractionService _interactionService;
     private readonly IServiceProvider _services;
 
-    private InteractionService _interactionService;
-
-    public InteractionMapper(DiscordSocketClient client, InteractionService interactionService, IServiceProvider services)
+    public InteractionMapper(DiscordSocketClient client, InteractionService interactionService,
+        IServiceProvider services)
     {
         _client = client;
         _services = services;
@@ -25,13 +23,13 @@ public class InteractionMapper
 
     public Task MapCommands()
     {
-
         //_client.MessageReceived += HandleCommandAsync;
         _client.InteractionCreated += HandleInteraction;
 
         // Map all commands contained within the assembly
         _client.Ready += async () =>
         {
+            await _client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
             await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
             await _interactionService.RegisterCommandsGloballyAsync();
         };
@@ -45,7 +43,7 @@ public class InteractionMapper
     //     await _commands.ExecuteAsync(new CommandContext(_client, message!), UserJoinedJourneyBase.UserJoinedCommand, _services);
     // }
 
-    private async Task HandleInteraction (SocketInteraction interaction)
+    private async Task HandleInteraction(SocketInteraction interaction)
     {
         try
         {
@@ -58,10 +56,8 @@ public class InteractionMapper
             Console.WriteLine(ex);
             // if a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
             // response, or at least let the user know that something went wrong during the command execution.
-            if(interaction.Type == InteractionType.ApplicationCommand)
-            {
-                await interaction.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
-            }
+            if (interaction.Type == InteractionType.ApplicationCommand)
+                await interaction.GetOriginalResponseAsync().ContinueWith(async msg => await msg.Result.DeleteAsync());
         }
     }
 

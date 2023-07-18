@@ -80,11 +80,11 @@ public class Program
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 break;
             case LogSeverity.Info:
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
                 break;
             case LogSeverity.Verbose:
             case LogSeverity.Debug:
-                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 break;
         }
         Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source}: {message.Message} {message.Exception}");

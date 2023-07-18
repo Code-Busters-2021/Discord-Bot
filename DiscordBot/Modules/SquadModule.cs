@@ -43,7 +43,7 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
         }
         else
         {
-            await RespondAsync("You need to be in the server to assign a squad");
+            await RespondAsync("You need to be in the server to use this command");
         }
     }
 

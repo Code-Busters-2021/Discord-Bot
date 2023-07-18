@@ -8,14 +8,19 @@ namespace DiscordBot.Core;
 // Handles data extracted from the codebusters guild
 public class GuildData
 {
+    private readonly SocketSelfUser _clientCurrentUser;
     public readonly SocketGuild Guild;
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration)
     {
+        _clientCurrentUser = client.CurrentUser;
         Guild = client.Guilds.First(guild =>
             guild.Name == configuration[$"GuildData:Name:{configuration["Environment"]}"]);
         ExtractRoles();
+        ExtractAnonymousPostChannels();
     }
+
+    public List<ITextChannel> PostMessageChannels { get; private set; }
 
     public IRole ManagerRole { get; private set; }
     public IRole DiamondRole { get; private set; }
@@ -24,6 +29,16 @@ public class GuildData
     public IRole BronzeRole { get; private set; }
 
     public List<IRole> Squads { get; private set; }
+
+    public void ExtractAnonymousPostChannels()
+    {
+        PostMessageChannels = Guild.Channels
+            .OfType<ITextChannel>()
+            .Where(channel => channel.PermissionOverwrites
+                .FirstOrDefault(overwrite => overwrite.TargetId == _clientCurrentUser.Id).Permissions
+                .SendMessages == PermValue.Allow)
+            .ToList();
+    }
 
     private void ExtractRoles()
     {
