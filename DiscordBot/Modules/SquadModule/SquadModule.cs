@@ -2,33 +2,30 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
-using DiscordBot.Modules.AutocompleteHandlers;
 
-namespace DiscordBot.Modules;
+namespace DiscordBot.Modules.SquadModule;
 
 public class SquadModule : InteractionModuleBase<SocketInteractionContext>
 {
-    public const string SetSquadId = "setsquad";
     public const string InputSquadId = "inputsquad";
     public const string CreateSquadId = "createsquad";
 
     private readonly GuildData _guildData;
+    private readonly SquadNameChecker _nameChecker;
 
-    public SquadModule(GuildData guildData)
+    public SquadModule(GuildData guildData, SquadNameChecker nameChecker)
     {
         _guildData = guildData;
+        _nameChecker = nameChecker;
     }
 
     [SlashCommand("squad", "Set squad for a user")]
-    public async Task SquadAsync(SocketUser user,
-        [Autocomplete(typeof(SquadAutocompleteHandler))]
+    public async Task SquadAsync([Summary("User")] SocketUser user,
+        [Summary("Squad")] [Autocomplete(typeof(SquadAutocompleteHandler))]
         string squadId)
     {
-        if (user is not SocketGuildUser guildUser)
-        {
-            await RespondAsync("You need to be in the server to use this command");
-            return;
-        }
+        var guildUser = user as SocketGuildUser ??
+                        _guildData.Guild.GetUser(user.Id);
 
         if (guildUser.GuildPermissions.Administrator)
         {
@@ -48,13 +45,11 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
+        await DeferAsync(true);
+
         var squad = Context.Guild.GetRole(ulong.Parse(squadId));
 
-        await guildUser.RemoveRolesAsync(_guildData.Squads);
-
-        await guildUser.AddRoleAsync(squad);
-
-        await RespondAsync($"{guildUser.Mention} est maintenant membre de {squad.Name}");
+        await AddUserToSquad(guildUser, squad);
     }
 
 
@@ -67,27 +62,37 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction($"{CreateSquadId}-*")]
     public async Task CreateSquad(string userId, AddSquadModal squadModal)
     {
+        var newName = squadModal.Name.Trim();
+        if (!_nameChecker.CheckName(newName))
+        {
+            await RespondAsync($"{newName} n'est pas un nom valide. Le nom doit:\n"
+                               + _nameChecker.Explanation);
+            return;
+        }
+
+        if (_guildData.Squads.Any(squad=>squad.Name == newName))
+        {
+            await RespondAsync($"{newName} existe déjà");
+            return;
+        }
+
+        await DeferAsync(true);
+
         var guild = Context.Guild;
-        var guildUser = guild.GetUser(ulong.Parse(userId));
 
         var squad = await guild.CreateRoleAsync(squadModal.Name, _guildData.Squads.FirstOrDefault()?.Permissions);
         _guildData.UpdateSquads();
 
-        await guildUser.RemoveRolesAsync(_guildData.Squads);
-
-        await guildUser.AddRoleAsync(squad);
-
-        await RespondAsync($"{guildUser.Mention} a été ajouté.e à {squad.Name}");
+        await AddUserToSquad(guild.GetUser(ulong.Parse(userId)), squad);
     }
 
-    // Defines the modal that will be sent.
-    public class AddSquadModal : IModal
+    private async Task AddUserToSquad(SocketGuildUser user, IRole squad)
     {
-        // Strings with the ModalTextInput attribute will automatically become components.
-        [InputLabel("Nom de la nouvelle squad")]
-        [ModalTextInput("squad_name", placeholder: "La Squad de Jean Dupond", maxLength: 30)]
-        public string Name { get; set; }
+        await user.RemoveRolesAsync(_guildData.Squads);
 
-        public string Title => "Creation de squad";
+        await user.AddRoleAsync(squad);
+
+        await user.SendMessageAsync($"Vous avez été ajouté.e à {squad.Name}");
+        await FollowupAsync($"{user.Mention} a été ajouté.e à {squad.Name}");
     }
 }

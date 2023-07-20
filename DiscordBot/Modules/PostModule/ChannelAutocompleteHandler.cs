@@ -2,7 +2,7 @@ using Discord;
 using Discord.Interactions;
 using DiscordBot.Core;
 
-namespace DiscordBot.Modules.AutocompleteHandlers;
+namespace DiscordBot.Modules.PostModule;
 
 public class ChannelAutocompleteHandler : AutocompleteHandler
 {

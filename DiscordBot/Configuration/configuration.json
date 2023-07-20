@@ -1,8 +1,6 @@
 {
-  "GuildData": {
-    "Name": {
-      "Debug": "Codebusters-Preprod",
-      "Production": "Code Busters"
-    }
-  }
+  "SquadAllowedWords": [
+    "squad",
+    "team"
+  ]
 }

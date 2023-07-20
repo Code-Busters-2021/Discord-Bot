@@ -1,5 +1,7 @@
 using Discord;
 using Discord.WebSocket;
+using DiscordBot.Modules;
+using DiscordBot.Modules.SquadModule;
 
 #pragma warning disable CS8618
 
@@ -9,13 +11,15 @@ namespace DiscordBot.Core;
 public class GuildData
 {
     private readonly SocketSelfUser _clientCurrentUser;
+    private readonly SquadNameChecker _squadNameChecker;
     public readonly SocketGuild Guild;
 
-    public GuildData(DiscordSocketClient client, IConfiguration configuration)
+    public GuildData(DiscordSocketClient client, IConfiguration configuration, SquadNameChecker squadNameChecker)
     {
+        _squadNameChecker = squadNameChecker;
         _clientCurrentUser = client.CurrentUser;
         Guild = client.Guilds.First(guild =>
-            guild.Name == configuration[$"GuildData:Name:{configuration["Environment"]}"]);
+            guild.Name == configuration["GuildName"]);
         ExtractRoles();
         ExtractAnonymousPostChannels();
     }
@@ -68,7 +72,7 @@ public class GuildData
     {
         Squads = new List<IRole>();
         foreach (IRole role in Guild.Roles)
-            if (role.Name.ToLower().Contains("squad"))
+            if (_squadNameChecker.CheckName(role.Name))
                 Squads.Add(role);
     }
 }

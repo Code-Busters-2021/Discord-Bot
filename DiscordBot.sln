@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordBot", "DiscordBot\DiscordBot.csproj", "{44C6FF7B-8449-409D-AE51-B072988F4F09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{24A876F3-7A2F-45E7-8461-D1C81805A213}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{44C6FF7B-8449-409D-AE51-B072988F4F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C6FF7B-8449-409D-AE51-B072988F4F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44C6FF7B-8449-409D-AE51-B072988F4F09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A876F3-7A2F-45E7-8461-D1C81805A213}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A876F3-7A2F-45E7-8461-D1C81805A213}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A876F3-7A2F-45E7-8461-D1C81805A213}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A876F3-7A2F-45E7-8461-D1C81805A213}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
