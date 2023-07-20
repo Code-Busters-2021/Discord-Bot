@@ -26,6 +26,7 @@ public class GuildData
 
     public List<ITextChannel> PostMessageChannels { get; private set; }
 
+    public IRole MasterRole { get; private set; }
     public IRole ManagerRole { get; private set; }
     public IRole DiamondRole { get; private set; }
     public IRole GoldRole { get; private set; }
@@ -64,6 +65,9 @@ public class GuildData
                     break;
                 case "Manager":
                     ManagerRole = role;
+                    break;
+                case "Master":
+                    MasterRole = role;
                     break;
             }
     }

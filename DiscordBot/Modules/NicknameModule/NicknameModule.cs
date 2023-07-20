@@ -1,4 +1,3 @@
-using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
@@ -16,7 +15,7 @@ public class NicknameModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("nickname", "Set a nickname for yourself")]
-    public async Task NicknameAsync([Summary("New-Nickname")] string newNickname = "")
+    public async Task InputNicknameAsync([Summary("New-Nickname")] string newNickname = "")
     {
         if (newNickname == "")
         {
@@ -31,9 +30,14 @@ public class NicknameModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [ModalInteraction($"{NicknameId}-*")]
-    public async Task PostMessage(string userId, NicknameModal modal)
+    public async Task SetNickname(string userId, NicknameModal modal)
     {
         var user = _guildData.Guild.GetUser(ulong.Parse(userId));
+
+        // This command doesn't work for now, the bot is missing permissions
+        await RespondAsync("I don't have permission to change your nickname, please do it yourself",
+            ephemeral: true);
+        return;
 
         await HandleNickname(user, modal.Name);
     }
@@ -42,7 +46,6 @@ public class NicknameModule : InteractionModuleBase<SocketInteractionContext>
     {
         await user.ModifyAsync(properties => properties.Nickname = newNickname);
 
-        await Context.User.SendMessageAsync($"Votre nom sur le serveur codebusters est à present '{newNickname}'");
-        await RespondAsync("");
+        await RespondAsync($"Votre nom sur le serveur codebusters est à present '{newNickname}'", ephemeral: true);
     }
 }

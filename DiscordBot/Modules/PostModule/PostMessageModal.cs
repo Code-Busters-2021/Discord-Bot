@@ -13,5 +13,5 @@ public class PostMessageModal : IModal
         "Bonjour,\nComme vous le savez tous ...\nC'est pour cela que ...\nAinsi ...")]
     public string Contenu { get; set; }
 
-    public string Title => "Poster un message";
+    public string Title => "Post";
 }

@@ -2,7 +2,7 @@ using Discord.Interactions;
 
 namespace DiscordBot.Modules.SquadModule;
 
-public class AddSquadModal : IModal
+public class CreateSquadModal : IModal
 {
     // Strings with the ModalTextInput attribute will automatically become components.
     [InputLabel("Nom de la nouvelle squad")]

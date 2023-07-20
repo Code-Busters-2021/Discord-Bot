@@ -43,6 +43,6 @@ public class RankModule : InteractionModuleBase<SocketInteractionContext>
 
         await guildUser.SendMessageAsync($"Vous êtes à présent {rankRole.Name}");
 
-        await RespondAsync($"{guildUser.Mention} est à présent {rankRole.Name}");
+        await RespondAsync($"{guildUser.Mention} est à présent {rankRole.Name}", ephemeral: true);
     }
 }

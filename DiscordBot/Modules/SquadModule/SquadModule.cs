@@ -7,7 +7,6 @@ namespace DiscordBot.Modules.SquadModule;
 
 public class SquadModule : InteractionModuleBase<SocketInteractionContext>
 {
-    public const string InputSquadId = "inputsquad";
     public const string CreateSquadId = "createsquad";
 
     private readonly GuildData _guildData;
@@ -33,34 +32,27 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        if (guildUser.Roles.Any(role => role.Id == _guildData.ManagerRole.Id))
+        if (guildUser.Roles.Any(role => role.Id == _guildData.ManagerRole.Id
+                                        || role.Id == _guildData.MasterRole.Id))
         {
-            await RespondAsync("You cannot assign a rank to a Manager");
+            await RespondAsync("You cannot assign a rank to a Manager or a Master");
             return;
         }
 
         if (squadId == "")
         {
-            await RespondWithModalAsync<AddSquadModal>($"{CreateSquadId}-{user.Id}");
+            await RespondWithModalAsync<CreateSquadModal>($"{CreateSquadId}-{user.Id}");
             return;
         }
 
         await DeferAsync(true);
 
         var squad = Context.Guild.GetRole(ulong.Parse(squadId));
-
         await AddUserToSquad(guildUser, squad);
     }
 
-
-    [ComponentInteraction($"{InputSquadId}-*")]
-    public async Task InputSquad(string userId)
-    {
-        await Context.Channel.DeleteMessageAsync(((IComponentInteraction)Context.Interaction).Message);
-    }
-
     [ModalInteraction($"{CreateSquadId}-*")]
-    public async Task CreateSquad(string userId, AddSquadModal squadModal)
+    public async Task CreateSquad(string userId, CreateSquadModal squadModal)
     {
         var newName = squadModal.Name.Trim();
         if (!_nameChecker.CheckName(newName))
@@ -70,7 +62,7 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        if (_guildData.Squads.Any(squad=>squad.Name == newName))
+        if (_guildData.Squads.Any(squad => squad.Name == newName))
         {
             await RespondAsync($"{newName} existe déjà");
             return;
@@ -93,6 +85,7 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
         await user.AddRoleAsync(squad);
 
         await user.SendMessageAsync($"Vous avez été ajouté.e à {squad.Name}");
-        await FollowupAsync($"{user.Mention} a été ajouté.e à {squad.Name}");
+
+        await FollowupAsync($"{user.Mention} a été ajouté.e à {squad.Name}", ephemeral: true);
     }
 }

@@ -29,6 +29,6 @@ public class PostMessageModule : InteractionModuleBase<SocketInteractionContext>
     {
         var textChannel = _guildData.Guild.GetTextChannel(ulong.Parse(channelId));
         await textChannel.SendMessageAsync(modal.Contenu);
-        await RespondAsync($"Le message a été posté sur le channel {textChannel.Name}");
+        await RespondAsync($"Le message a été posté sur le channel {textChannel.Name}", ephemeral: true);
     }
 }
