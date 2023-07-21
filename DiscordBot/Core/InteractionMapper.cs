@@ -30,7 +30,7 @@ public class InteractionMapper
         _client.Ready += async () =>
         {
             await _client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-            await _services.GetRequiredService<GuildData>().Guild.DeleteApplicationCommandsAsync();
+            // await _services.GetRequiredService<GuildData>().Guild.DeleteApplicationCommandsAsync();
 
             await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
             await _interactionService.RegisterCommandsGloballyAsync();

@@ -1,6 +1,44 @@
 {
-  "SquadAllowedWords": [
-    "squad",
-    "team"
-  ]
+  "Roles": {
+    "Master": "Master",
+    "Manager": "Manager",
+    "Diamond": "Diamond",
+    "Gold": "Gold",
+    "Silver": "Silver",
+    "Bronze": "Bronze",
+    "Unranked": "Unranked",
+    "Moderator": "Modérateur"
+  },
+  "RankModule": {
+    "AllowedRoles": [
+      "Manager",
+      "Moderator"
+    ],
+    "CanBeUsedOn": [
+      "Manager",
+      "Diamond",
+      "Gold",
+      "Silver",
+      "Bronze",
+      "Unranked"
+    ]
+  },
+  "SquadModule": {
+    "AllowedRoles": [
+      "Manager",
+      "Moderator"
+    ],
+    "CanBeUsedOn": [
+      "Manager",
+      "Diamond",
+      "Gold",
+      "Silver",
+      "Bronze",
+      "Unranked"
+    ],
+    "SquadAllowedWords": [
+      "squad",
+      "team"
+    ]
+  }
 }

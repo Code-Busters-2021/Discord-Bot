@@ -2,20 +2,27 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
+using DiscordBot.Modules.ModuleBase;
 
 namespace DiscordBot.Modules.SquadModule;
 
-public class SquadModule : InteractionModuleBase<SocketInteractionContext>
+public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext>
 {
     public const string CreateSquadId = "createsquad";
 
-    private readonly GuildData _guildData;
+    private readonly HashSet<ulong> _canBeUsedOn;
+
     private readonly SquadNameChecker _nameChecker;
 
-    public SquadModule(GuildData guildData, SquadNameChecker nameChecker)
+    public SquadModule(GuildData guildData, SquadNameChecker nameChecker, SquadModuleConfiguration config) :
+        base(guildData)
     {
-        _guildData = guildData;
         _nameChecker = nameChecker;
+        AllowedRoles = config.AllowedRoles?
+            .Select(roleStr => guildData.ImportantRoles[roleStr].Id)
+            .ToHashSet();
+        _canBeUsedOn = config.CanBeUsedOn!
+            .Select(roleStr => GuildData.ImportantRoles[roleStr].Id).ToHashSet();
     }
 
     [SlashCommand("squad", "Set squad for a user")]
@@ -23,19 +30,20 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
         [Summary("Squad")] [Autocomplete(typeof(SquadAutocompleteHandler))]
         string squadId)
     {
-        var guildUser = user as SocketGuildUser ??
-                        _guildData.Guild.GetUser(user.Id);
+        await RespondAndThrowIfUserDenied();
 
-        if (guildUser.GuildPermissions.Administrator)
+        var targetUser = user as SocketGuildUser ??
+                         GuildData.Guild.GetUser(user.Id);
+
+        if (targetUser.GuildPermissions.Administrator)
         {
             await RespondAsync("You cannot assign a rank to an admin user");
             return;
         }
 
-        if (guildUser.Roles.Any(role => role.Id == _guildData.ManagerRole.Id
-                                        || role.Id == _guildData.MasterRole.Id))
+        if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id)))
         {
-            await RespondAsync("You cannot assign a rank to a Manager or a Master");
+            await RespondAsync("You can only assign a rank to a BBBuster");
             return;
         }
 
@@ -48,7 +56,7 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
         await DeferAsync(true);
 
         var squad = Context.Guild.GetRole(ulong.Parse(squadId));
-        await AddUserToSquad(guildUser, squad);
+        await AddUserToSquad(targetUser, squad);
     }
 
     [ModalInteraction($"{CreateSquadId}-*")]
@@ -62,7 +70,7 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        if (_guildData.Squads.Any(squad => squad.Name == newName))
+        if (GuildData.Squads.Any(squad => squad.Name == newName))
         {
             await RespondAsync($"{newName} existe déjà");
             return;
@@ -72,15 +80,15 @@ public class SquadModule : InteractionModuleBase<SocketInteractionContext>
 
         var guild = Context.Guild;
 
-        var squad = await guild.CreateRoleAsync(squadModal.Name, _guildData.Squads.FirstOrDefault()?.Permissions);
-        _guildData.UpdateSquads();
+        var squad = await guild.CreateRoleAsync(squadModal.Name, GuildData.Squads.FirstOrDefault()?.Permissions);
+        GuildData.UpdateSquads();
 
         await AddUserToSquad(guild.GetUser(ulong.Parse(userId)), squad);
     }
 
     private async Task AddUserToSquad(SocketGuildUser user, IRole squad)
     {
-        await user.RemoveRolesAsync(_guildData.Squads);
+        await user.RemoveRolesAsync(GuildData.Squads);
 
         await user.AddRoleAsync(squad);
 

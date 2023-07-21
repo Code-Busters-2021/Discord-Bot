@@ -2,15 +2,16 @@ namespace DiscordBot.Modules.SquadModule;
 
 public class SquadNameChecker
 {
-    private readonly List<string> _squadAllowedWords;
+    private readonly string[] _squadAllowedWords;
 
     [ActivatorUtilitiesConstructor]
-    public SquadNameChecker(IConfiguration configuration)
-        : this(configuration.GetSection("SquadAllowedWords").Get<List<string>>())
+    public SquadNameChecker(SquadModuleConfiguration config)
+        : this(config.SquadAllowedWords
+               ?? throw new Exception(nameof(config.SquadAllowedWords) + " configuration was not found"))
     {
     }
 
-    public SquadNameChecker(List<string> squadAllowedWords)
+    public SquadNameChecker(string[] squadAllowedWords)
     {
         _squadAllowedWords = squadAllowedWords;
     }

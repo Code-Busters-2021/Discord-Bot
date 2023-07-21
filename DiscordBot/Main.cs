@@ -38,8 +38,7 @@ public class Program
         // Setup your DI container.
         _services = new ServiceCollection()
             .AddSingleton(_ => _client)
-            .AddSingleton(_configuration)
-            .ConfigureServices()
+            .ConfigureServices(_configuration)
             .BuildServiceProvider();
     }
 

@@ -1,6 +1,5 @@
 using Discord;
 using Discord.WebSocket;
-using DiscordBot.Modules;
 using DiscordBot.Modules.SquadModule;
 
 #pragma warning disable CS8618
@@ -11,8 +10,13 @@ namespace DiscordBot.Core;
 public class GuildData
 {
     private readonly SocketSelfUser _clientCurrentUser;
+
     private readonly SquadNameChecker _squadNameChecker;
+
     public readonly SocketGuild Guild;
+
+
+    private Dictionary<string, IRole> _importantRoles;
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration, SquadNameChecker squadNameChecker)
     {
@@ -20,18 +24,13 @@ public class GuildData
         _clientCurrentUser = client.CurrentUser;
         Guild = client.Guilds.First(guild =>
             guild.Name == configuration["GuildName"]);
-        ExtractRoles();
+        ExtractRoles(configuration);
         ExtractAnonymousPostChannels();
     }
 
     public List<ITextChannel> PostMessageChannels { get; private set; }
 
-    public IRole MasterRole { get; private set; }
-    public IRole ManagerRole { get; private set; }
-    public IRole DiamondRole { get; private set; }
-    public IRole GoldRole { get; private set; }
-    public IRole SilverRole { get; private set; }
-    public IRole BronzeRole { get; private set; }
+    public IReadOnlyDictionary<string, IRole> ImportantRoles => _importantRoles;
 
     public List<IRole> Squads { get; private set; }
 
@@ -45,31 +44,13 @@ public class GuildData
             .ToList();
     }
 
-    private void ExtractRoles()
+    private void ExtractRoles(IConfiguration configuration)
     {
         UpdateSquads();
-        foreach (IRole role in Guild.Roles)
-            switch (role.Name)
-            {
-                case "Diamond":
-                    DiamondRole = role;
-                    break;
-                case "Gold":
-                    GoldRole = role;
-                    break;
-                case "Silver":
-                    SilverRole = role;
-                    break;
-                case "Bronze":
-                    BronzeRole = role;
-                    break;
-                case "Manager":
-                    ManagerRole = role;
-                    break;
-                case "Master":
-                    MasterRole = role;
-                    break;
-            }
+        _importantRoles = configuration.GetSection("Roles").GetChildren()
+            .ToDictionary(section => section.Key,
+                section => Guild.Roles.FirstOrDefault(role => role.Name == section.Value) as IRole
+                           ?? throw new Exception($"Role not found in the guild: {section.Value}"));
     }
 
     public void UpdateSquads()

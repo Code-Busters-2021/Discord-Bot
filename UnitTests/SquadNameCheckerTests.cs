@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using DiscordBot.Modules;
 using DiscordBot.Modules.SquadModule;
 using FluentAssertions;
 using NUnit.Framework;
@@ -8,14 +6,14 @@ namespace UnitTests;
 
 public class SquadNameCheckerTests
 {
-    private readonly List<string> allowedWords = new() { "squad", "Team" };
+    private readonly string[] _allowedWords = { "squad", "Team" };
 
     private SquadNameChecker _squadNameChecker = null!;
 
     [SetUp]
     public void Setup()
     {
-        _squadNameChecker = new SquadNameChecker(allowedWords);
+        _squadNameChecker = new SquadNameChecker(_allowedWords);
     }
 
     [TestCase("SQUAD", true)]
