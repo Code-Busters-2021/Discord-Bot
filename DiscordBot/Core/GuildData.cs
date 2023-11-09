@@ -24,7 +24,7 @@ public class GuildData
         _squadNameChecker = squadNameChecker;
         _clientCurrentUser = client.CurrentUser;
         Guild = client.Guilds.First(guild =>
-            guild.Name == configuration["GuildName"]);
+            guild.Id == ulong.Parse(configuration["GuildId"]));
         ExtractRoles(configuration);
         ExtractAnonymousPostChannels();
     }
@@ -50,7 +50,7 @@ public class GuildData
         UpdateSquads();
         _gradeRoles = configuration.GetSection("Grades").Get<string[]>()
             .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
-            ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
+                               ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
     }
 
     public void UpdateSquads()

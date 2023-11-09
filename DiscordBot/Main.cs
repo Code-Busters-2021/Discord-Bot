@@ -17,7 +17,7 @@ public class Program
 
     public Program()
     {
-        _configuration = Configuration.BuildConfiguration();
+        _configuration = Configuration.BuildConfiguration(Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
 
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
@@ -88,7 +88,8 @@ public class Program
         await _client.LoginAsync(TokenType.Bot, _configuration["BotToken"]);
         await _client.StartAsync();
 
-        await _services.GetRequiredService<InteractionMapper>().MapCommands();
+        await _services.GetRequiredService<InteractionMapper>()
+            .MapCommands(ulong.Parse(_configuration["GuildId"]));
 
         // Wait infinitely so your bot actually stays connected.
         await Task.Delay(Timeout.Infinite);

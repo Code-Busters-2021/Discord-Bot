@@ -21,7 +21,7 @@ public class InteractionMapper
         _interactionService = interactionService;
     }
 
-    public Task MapCommands()
+    public Task MapCommands(ulong guildId)
     {
         _client.InteractionCreated += HandleInteraction;
 
@@ -32,7 +32,7 @@ public class InteractionMapper
             await _client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
 
             await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
-            await _interactionService.RegisterCommandsGloballyAsync();
+            await _interactionService.RegisterCommandsToGuildAsync(guildId);
         };
 
         return Task.CompletedTask;
