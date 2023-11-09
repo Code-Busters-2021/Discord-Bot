@@ -1,6 +1,5 @@
 using Discord.Interactions;
 using DiscordBot.Modules.GradeModule;
-using DiscordBot.Modules.RankModule;
 using DiscordBot.Modules.SquadModule;
 
 namespace DiscordBot.Core;

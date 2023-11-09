@@ -1,9 +1,7 @@
 using Discord;
 using Discord.Interactions;
-using DiscordBot.Core;
-using DiscordBot.Modules.GradeModule;
 
-namespace DiscordBot.Modules.RankModule;
+namespace DiscordBot.Modules.GradeModule;
 
 public class GradeAutocompleteHandler : AutocompleteHandler
 {

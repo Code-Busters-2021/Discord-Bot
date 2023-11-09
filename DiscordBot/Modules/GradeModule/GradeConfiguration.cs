@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using DiscordBot.Modules.SquadModule;
 
 namespace DiscordBot.Modules.GradeModule;
 

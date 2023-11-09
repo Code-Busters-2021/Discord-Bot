@@ -9,15 +9,16 @@ namespace DiscordBot.Core;
 // Handles data extracted from the codebusters guild
 public class GuildData
 {
+    public IEnumerable<ITextChannel> PostChannels => _postChannels;
+    public IEnumerable<IRole> GradeRoles => _gradeRoles;
+    public IEnumerable<IRole> SquadRoles => _squadRoles;
+
     private readonly SocketSelfUser _clientCurrentUser;
-
     private readonly SquadNameChecker _squadNameChecker;
-
     public readonly SocketGuild Guild;
-
-
     private List<IRole> _gradeRoles;
-    public List<IRole> _squadRoles { get; private set; }
+    private List<IRole> _squadRoles;
+    private List<ITextChannel> _postChannels;
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration, SquadNameChecker squadNameChecker)
     {
@@ -26,34 +27,29 @@ public class GuildData
         Guild = client.Guilds.First(guild =>
             guild.Id == ulong.Parse(configuration["GuildId"]));
         ExtractRoles(configuration);
-        ExtractAnonymousPostChannels();
+        ExtractPostChannels(configuration);
+        ExtractSquads();
     }
 
-    public List<ITextChannel> PostMessageChannels { get; private set; }
-
-    public IReadOnlyList<IRole> GradeRoles => _gradeRoles;
-    public IReadOnlyList<IRole> SquadRoles => _squadRoles;
-
-
-    public void ExtractAnonymousPostChannels()
+    private void ExtractPostChannels(IConfiguration configuration)
     {
-        PostMessageChannels = Guild.Channels
+        var postChannels = configuration.GetSection("PostChannels").Get<HashSet<ulong>>();
+        if (postChannels == null || postChannels.Count == 0)
+            throw new Exception("Could not load any post channels");
+        _postChannels = Guild.Channels
             .OfType<ITextChannel>()
-            .Where(channel => channel.PermissionOverwrites
-                .FirstOrDefault(overwrite => overwrite.TargetId == _clientCurrentUser.Id).Permissions
-                .SendMessages == PermValue.Allow)
+            .Where(channel => postChannels.Contains(channel.Id))
             .ToList();
     }
 
     private void ExtractRoles(IConfiguration configuration)
     {
-        UpdateSquads();
         _gradeRoles = configuration.GetSection("Grades").Get<string[]>()
             .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
                                ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
     }
 
-    public void UpdateSquads()
+    public void ExtractSquads()
     {
         _squadRoles = new List<IRole>();
         foreach (IRole role in Guild.Roles)

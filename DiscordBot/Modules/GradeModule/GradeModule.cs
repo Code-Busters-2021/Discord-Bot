@@ -2,10 +2,9 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
-using DiscordBot.Modules.GradeModule;
 using DiscordBot.Modules.ModuleBase;
 
-namespace DiscordBot.Modules.RankModule;
+namespace DiscordBot.Modules.GradeModule;
 
 public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext>
 {
@@ -20,10 +19,10 @@ public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext
             .Select(roleStr => GuildData.GradeRoles.First(role => role.Name == roleStr).Id).ToHashSet();
     }
 
-    [SlashCommand("rank", "Set rank for a user")]
-    public async Task RankAsync([Summary("User")] SocketUser user,
-        [Summary("Rank")] [Autocomplete(typeof(GradeAutocompleteHandler))]
-        string rankStr)
+    [SlashCommand("grade", "Set grade for a user")]
+    public async Task GradeAsync([Summary("User")] SocketUser user,
+        [Summary("Grade")] [Autocomplete(typeof(GradeAutocompleteHandler))]
+        string gradeStr)
     {
         await RespondAndThrowIfUserDenied();
 
@@ -32,7 +31,7 @@ public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         if (targetUser.GuildPermissions.Administrator)
         {
-            await RespondAsync("You cannot assign a rank to an admin user", ephemeral: true);
+            await RespondAsync("You cannot assign a grade to an admin user", ephemeral: true);
             return;
         }
 
@@ -44,11 +43,11 @@ public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         await targetUser.RemoveRolesAsync(_canBeUsedOn);
 
-        var rankRole = GuildData.GradeRoles.First(rank => rank.Name == rankStr);
-        await targetUser.AddRoleAsync(rankRole);
+        var grade = GuildData.GradeRoles.First(grade => grade.Name == gradeStr);
+        await targetUser.AddRoleAsync(grade);
 
-        await targetUser.SendMessageAsync($"Vous êtes à présent {rankRole.Name}");
+        await targetUser.SendMessageAsync($"Vous êtes à présent {grade.Name}");
 
-        await RespondAsync($"{targetUser.Mention} est à présent {rankRole.Name}", ephemeral: true);
+        await RespondAsync($"{targetUser.Mention} est à présent {grade.Name}", ephemeral: true);
     }
 }

@@ -38,13 +38,13 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         if (targetUser.GuildPermissions.Administrator)
         {
-            await RespondAsync("You cannot assign a rank to an admin user", ephemeral: true);
+            await RespondAsync("You cannot assign a grade to an admin user", ephemeral: true);
             return;
         }
 
         if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id)))
         {
-            await RespondAsync("You can only assign a rank to a BBBuster", ephemeral: true);
+            await RespondAsync("You can only assign a grade to a BBBuster", ephemeral: true);
             return;
         }
 
@@ -82,7 +82,7 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
         var guild = Context.Guild;
 
         var squad = await guild.CreateRoleAsync(squadModal.Name, GuildData.SquadRoles.FirstOrDefault()?.Permissions);
-        GuildData.UpdateSquads();
+        GuildData.ExtractSquads();
 
         await AddUserToSquad(guild.GetUser(ulong.Parse(userId)), squad);
     }

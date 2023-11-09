@@ -10,7 +10,7 @@ public class ChannelAutocompleteHandler : AutocompleteHandler
         IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
         // Create a collection with suggestions for autocomplete
-        var results = services.GetRequiredService<GuildData>().PostMessageChannels
+        var results = services.GetRequiredService<GuildData>().PostChannels
             .Select(channel => new AutocompleteResult(channel.Name, channel.Id.ToString()));
 
         // max - 25 suggestions at a time (API limit)
