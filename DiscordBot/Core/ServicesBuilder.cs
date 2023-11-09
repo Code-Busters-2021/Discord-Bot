@@ -1,4 +1,5 @@
 using Discord.Interactions;
+using DiscordBot.Modules.GradeModule;
 using DiscordBot.Modules.RankModule;
 using DiscordBot.Modules.SquadModule;
 
@@ -16,6 +17,6 @@ public static class ServicesBuilder
             .AddSingleton<InteractionMapper>()
             .AddSingleton(_ => configuration)
             .AddSingleton(SquadModuleConfiguration.Get(configuration))
-            .AddSingleton(RankModuleConfiguration.Get(configuration));
+            .AddSingleton(GradeModuleConfiguration.Get(configuration));
     }
 }

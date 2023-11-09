@@ -1,5 +1,5 @@
 {
-  "Roles": [
+  "Grades": [
     "Master",
     "Manager",
     "Diamond",
@@ -9,7 +9,7 @@
     "Unranked",
     "Moderateur"
   ],
-  "RankModule": {
+  "GradeModule": {
     "AllowedRoles": [
       "Manager",
       "Moderateur"

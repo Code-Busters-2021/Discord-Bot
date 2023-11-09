@@ -19,10 +19,10 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
     {
         _nameChecker = nameChecker;
         AllowedRoles = config.AllowedRoles?
-            .Select(roleStr => guildData.ImportantRoles.First(role => role.Name == roleStr).Id)
+            .Select(roleStr => guildData.GradeRoles.First(role => role.Name == roleStr).Id)
             .ToHashSet();
         _canBeUsedOn = config.CanBeUsedOn!
-            .Select(roleStr => GuildData.ImportantRoles.First(role => role.Name == roleStr).Id)
+            .Select(roleStr => GuildData.GradeRoles.First(role => role.Name == roleStr).Id)
             .ToHashSet();
     }
 
@@ -71,7 +71,7 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
             return;
         }
 
-        if (GuildData.Squads.Any(squad => squad.Name == newName))
+        if (GuildData.SquadRoles.Any(squad => squad.Name == newName))
         {
             await RespondAsync($"{newName} existe déjà");
             return;
@@ -81,7 +81,7 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         var guild = Context.Guild;
 
-        var squad = await guild.CreateRoleAsync(squadModal.Name, GuildData.Squads.FirstOrDefault()?.Permissions);
+        var squad = await guild.CreateRoleAsync(squadModal.Name, GuildData.SquadRoles.FirstOrDefault()?.Permissions);
         GuildData.UpdateSquads();
 
         await AddUserToSquad(guild.GetUser(ulong.Parse(userId)), squad);
@@ -89,7 +89,7 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
 
     private async Task AddUserToSquad(SocketGuildUser user, IRole squad)
     {
-        await user.RemoveRolesAsync(GuildData.Squads);
+        await user.RemoveRolesAsync(GuildData.SquadRoles);
 
         await user.AddRoleAsync(squad);
 

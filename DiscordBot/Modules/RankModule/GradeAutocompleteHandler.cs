@@ -1,15 +1,16 @@
 using Discord;
 using Discord.Interactions;
 using DiscordBot.Core;
+using DiscordBot.Modules.GradeModule;
 
 namespace DiscordBot.Modules.RankModule;
 
-public class RankAutocompleteHandler : AutocompleteHandler
+public class GradeAutocompleteHandler : AutocompleteHandler
 {
     public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context,
         IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
-        var configuration = services.GetRequiredService<RankModuleConfiguration>();
+        var configuration = services.GetRequiredService<GradeModuleConfiguration>();
         // Create a collection with suggestions for autocomplete
         var results = configuration.CanBeUsedOn!
             .Select(roleStr => new AutocompleteResult(roleStr, roleStr));

@@ -21,8 +21,8 @@ public class SquadAutocompleteHandler : AutocompleteHandler
         var userInput = autocompleteInteraction.Data.Current.Value.ToString()!;
 
         var showSquads = userInput == ""
-            ? _guildData.Squads.Take(MaxOptionCount)
-            : _guildData.Squads
+            ? _guildData.SquadRoles.Take(MaxOptionCount)
+            : _guildData.SquadRoles
                 .Where(squad => squad.Name.StartsWith(userInput, StringComparison.OrdinalIgnoreCase))
                 .Take(MaxOptionCount);
 

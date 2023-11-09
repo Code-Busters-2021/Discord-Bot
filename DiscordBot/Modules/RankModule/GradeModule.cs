@@ -2,26 +2,27 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Core;
+using DiscordBot.Modules.GradeModule;
 using DiscordBot.Modules.ModuleBase;
 
 namespace DiscordBot.Modules.RankModule;
 
-public class RankModule : OverlayInteractionModuleBase<SocketInteractionContext>
+public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext>
 {
     private readonly HashSet<ulong> _canBeUsedOn;
 
-    public RankModule(GuildData guildData, RankModuleConfiguration configuration) : base(guildData)
+    public GradeModule(GuildData guildData, GradeModuleConfiguration configuration) : base(guildData)
     {
         AllowedRoles = configuration.AllowedRoles?
-            .Select(roleStr => guildData.ImportantRoles.First(role => role.Name == roleStr).Id)
+            .Select(roleStr => guildData.GradeRoles.First(role => role.Name == roleStr).Id)
             .ToHashSet();
         _canBeUsedOn = configuration.CanBeUsedOn!
-            .Select(roleStr => GuildData.ImportantRoles.First(role => role.Name == roleStr).Id).ToHashSet();
+            .Select(roleStr => GuildData.GradeRoles.First(role => role.Name == roleStr).Id).ToHashSet();
     }
 
     [SlashCommand("rank", "Set rank for a user")]
     public async Task RankAsync([Summary("User")] SocketUser user,
-        [Summary("Rank")] [Autocomplete(typeof(RankAutocompleteHandler))]
+        [Summary("Rank")] [Autocomplete(typeof(GradeAutocompleteHandler))]
         string rankStr)
     {
         await RespondAndThrowIfUserDenied();
@@ -43,7 +44,7 @@ public class RankModule : OverlayInteractionModuleBase<SocketInteractionContext>
 
         await targetUser.RemoveRolesAsync(_canBeUsedOn);
 
-        var rankRole = GuildData.ImportantRoles.First(rank => rank.Name == rankStr);
+        var rankRole = GuildData.GradeRoles.First(rank => rank.Name == rankStr);
         await targetUser.AddRoleAsync(rankRole);
 
         await targetUser.SendMessageAsync($"Vous êtes à présent {rankRole.Name}");

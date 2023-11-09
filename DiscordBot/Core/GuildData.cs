@@ -16,7 +16,8 @@ public class GuildData
     public readonly SocketGuild Guild;
 
 
-    private List<IRole> _importantRoles;
+    private List<IRole> _gradeRoles;
+    public List<IRole> _squadRoles { get; private set; }
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration, SquadNameChecker squadNameChecker)
     {
@@ -30,9 +31,9 @@ public class GuildData
 
     public List<ITextChannel> PostMessageChannels { get; private set; }
 
-    public IReadOnlyList<IRole> ImportantRoles => _importantRoles;
+    public IReadOnlyList<IRole> GradeRoles => _gradeRoles;
+    public IReadOnlyList<IRole> SquadRoles => _squadRoles;
 
-    public List<IRole> Squads { get; private set; }
 
     public void ExtractAnonymousPostChannels()
     {
@@ -47,17 +48,17 @@ public class GuildData
     private void ExtractRoles(IConfiguration configuration)
     {
         UpdateSquads();
-        _importantRoles = configuration.GetSection("Roles").Get<string[]>()
+        _gradeRoles = configuration.GetSection("Grades").Get<string[]>()
             .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
             ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
     }
 
     public void UpdateSquads()
     {
-        Squads = new List<IRole>();
+        _squadRoles = new List<IRole>();
         foreach (IRole role in Guild.Roles)
             if (_squadNameChecker.CheckName(role.Name))
-                Squads.Add(role);
+                _squadRoles.Add(role);
     }
 }
 
