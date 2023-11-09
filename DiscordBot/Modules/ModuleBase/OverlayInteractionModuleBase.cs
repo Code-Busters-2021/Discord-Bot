@@ -34,7 +34,7 @@ public abstract class OverlayInteractionModuleBase<T> : InteractionModuleBase<T>
         var user = Context.User as SocketGuildUser ??
                    GuildData.Guild.GetUser(Context.User.Id);
         if (IsUserAllowed(user)) return;
-        await RespondAsync("You are not allowed to use this command");
+        await RespondAsync("You are not allowed to use this command", ephemeral: true);
         throw new Exception();
     }
 }

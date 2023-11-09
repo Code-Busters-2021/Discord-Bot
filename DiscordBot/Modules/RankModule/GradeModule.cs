@@ -32,13 +32,13 @@ public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         if (targetUser.GuildPermissions.Administrator)
         {
-            await RespondAsync("You cannot assign a rank to an admin user");
+            await RespondAsync("You cannot assign a rank to an admin user", ephemeral: true);
             return;
         }
 
         if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id)))
         {
-            await RespondAsync("You cannot use this command on this user");
+            await RespondAsync("You cannot use this command on this user", ephemeral: true);
             return;
         }
 
