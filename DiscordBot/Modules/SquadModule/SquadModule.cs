@@ -38,13 +38,13 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
 
         if (targetUser.GuildPermissions.Administrator)
         {
-            await RespondAsync("You cannot assign a rank to an admin user");
+            await RespondAsync("You cannot assign a rank to an admin user", ephemeral: true);
             return;
         }
 
         if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id)))
         {
-            await RespondAsync("You can only assign a rank to a BBBuster");
+            await RespondAsync("You can only assign a rank to a BBBuster", ephemeral: true);
             return;
         }
 
@@ -67,13 +67,13 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
         if (!_nameChecker.CheckName(newName))
         {
             await RespondAsync($"{newName} n'est pas un nom valide. Le nom doit:\n"
-                               + _nameChecker.Explanation);
+                               + _nameChecker.Explanation, ephemeral: true);
             return;
         }
 
         if (GuildData.Squads.Any(squad => squad.Name == newName))
         {
-            await RespondAsync($"{newName} existe déjà");
+            await RespondAsync($"{newName} existe déjà", ephemeral: true);
             return;
         }
 

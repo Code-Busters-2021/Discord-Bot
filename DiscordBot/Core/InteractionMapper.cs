@@ -30,7 +30,6 @@ public class InteractionMapper
         _client.Ready += async () =>
         {
             await _client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-            // await _services.GetRequiredService<GuildData>().Guild.DeleteApplicationCommandsAsync();
 
             await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
             await _interactionService.RegisterCommandsGloballyAsync();
@@ -38,12 +37,6 @@ public class InteractionMapper
 
         return Task.CompletedTask;
     }
-
-    // private async Task HandleUserJoinedAsync(SocketGuildUser user)
-    // {
-    //     var message =  await user.SendMessageAsync($"Bienvenue sur le Discord Codebusters!");
-    //     await _commands.ExecuteAsync(new CommandContext(_client, message!), UserJoinedJourneyBase.UserJoinedCommand, _services);
-    // }
 
     private async Task HandleInteraction(SocketInteraction interaction)
     {

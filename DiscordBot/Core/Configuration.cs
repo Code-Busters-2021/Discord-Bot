@@ -1,3 +1,4 @@
+using Discord;
 using Microsoft.Extensions.Configuration.Json;
 
 namespace DiscordBot.Core;
@@ -14,8 +15,10 @@ public static class Configuration
 #if DEBUG
         var env = "Debug";
 #else
-        string env = "Release";
+        var env = "Release";
 #endif
+        Program.Log(new LogMessage(LogSeverity.Info, nameof(Configuration), $"Loading environment: {env}"));
+
         config.Sources.Add(new JsonConfigurationSource { Path = GetConfigurationSource(env) });
         return config.Build();
     }
