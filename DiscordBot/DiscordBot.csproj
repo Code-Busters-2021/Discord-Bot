@@ -5,6 +5,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+      <Content Remove="Configuration\configuration.Debug.json" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="Configuration\configuration.Debug.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Discord.Net" Version="3.10.0" />
     </ItemGroup>
     <Target Name="CopyFiles">

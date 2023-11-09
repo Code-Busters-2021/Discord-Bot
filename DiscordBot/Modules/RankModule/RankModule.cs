@@ -13,10 +13,10 @@ public class RankModule : OverlayInteractionModuleBase<SocketInteractionContext>
     public RankModule(GuildData guildData, RankModuleConfiguration configuration) : base(guildData)
     {
         AllowedRoles = configuration.AllowedRoles?
-            .Select(roleStr => guildData.ImportantRoles[roleStr].Id)
+            .Select(roleStr => guildData.ImportantRoles.First(role => role.Name == roleStr).Id)
             .ToHashSet();
         _canBeUsedOn = configuration.CanBeUsedOn!
-            .Select(roleStr => GuildData.ImportantRoles[roleStr].Id).ToHashSet();
+            .Select(roleStr => GuildData.ImportantRoles.First(role => role.Name == roleStr).Id).ToHashSet();
     }
 
     [SlashCommand("rank", "Set rank for a user")]
@@ -43,7 +43,7 @@ public class RankModule : OverlayInteractionModuleBase<SocketInteractionContext>
 
         await targetUser.RemoveRolesAsync(_canBeUsedOn);
 
-        var rankRole = GuildData.ImportantRoles[rankStr];
+        var rankRole = GuildData.ImportantRoles.First(rank => rank.Name == rankStr);
         await targetUser.AddRoleAsync(rankRole);
 
         await targetUser.SendMessageAsync($"Vous êtes à présent {rankRole.Name}");

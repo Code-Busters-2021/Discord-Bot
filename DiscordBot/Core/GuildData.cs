@@ -16,7 +16,7 @@ public class GuildData
     public readonly SocketGuild Guild;
 
 
-    private Dictionary<string, IRole> _importantRoles;
+    private List<IRole> _importantRoles;
 
     public GuildData(DiscordSocketClient client, IConfiguration configuration, SquadNameChecker squadNameChecker)
     {
@@ -30,7 +30,7 @@ public class GuildData
 
     public List<ITextChannel> PostMessageChannels { get; private set; }
 
-    public IReadOnlyDictionary<string, IRole> ImportantRoles => _importantRoles;
+    public IReadOnlyList<IRole> ImportantRoles => _importantRoles;
 
     public List<IRole> Squads { get; private set; }
 
@@ -47,10 +47,9 @@ public class GuildData
     private void ExtractRoles(IConfiguration configuration)
     {
         UpdateSquads();
-        _importantRoles = configuration.GetSection("Roles").GetChildren()
-            .ToDictionary(section => section.Key,
-                section => Guild.Roles.FirstOrDefault(role => role.Name == section.Value) as IRole
-                           ?? throw new Exception($"Role not found in the guild: {section.Value}"));
+        _importantRoles = configuration.GetSection("Roles").Get<string[]>()
+            .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
+            ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
     }
 
     public void UpdateSquads()

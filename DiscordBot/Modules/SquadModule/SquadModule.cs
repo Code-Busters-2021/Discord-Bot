@@ -19,10 +19,11 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
     {
         _nameChecker = nameChecker;
         AllowedRoles = config.AllowedRoles?
-            .Select(roleStr => guildData.ImportantRoles[roleStr].Id)
+            .Select(roleStr => guildData.ImportantRoles.First(role => role.Name == roleStr).Id)
             .ToHashSet();
         _canBeUsedOn = config.CanBeUsedOn!
-            .Select(roleStr => GuildData.ImportantRoles[roleStr].Id).ToHashSet();
+            .Select(roleStr => GuildData.ImportantRoles.First(role => role.Name == roleStr).Id)
+            .ToHashSet();
     }
 
     [SlashCommand("squad", "Set squad for a user")]

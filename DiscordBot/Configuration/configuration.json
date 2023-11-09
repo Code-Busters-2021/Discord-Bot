@@ -1,18 +1,18 @@
 {
-  "Roles": {
-    "Master": "Master",
-    "Manager": "Manager",
-    "Diamond": "Diamond",
-    "Gold": "Gold",
-    "Silver": "Silver",
-    "Bronze": "Bronze",
-    "Unranked": "Unranked",
-    "Moderator": "Modérateur"
-  },
+  "Roles": [
+    "Master",
+    "Manager",
+    "Diamond",
+    "Gold",
+    "Silver",
+    "Bronze",
+    "Unranked",
+    "Moderateur"
+  ],
   "RankModule": {
     "AllowedRoles": [
       "Manager",
-      "Moderator"
+      "Moderateur"
     ],
     "CanBeUsedOn": [
       "Manager",
@@ -26,7 +26,7 @@
   "SquadModule": {
     "AllowedRoles": [
       "Manager",
-      "Moderator"
+      "Moderateur"
     ],
     "CanBeUsedOn": [
       "Manager",
