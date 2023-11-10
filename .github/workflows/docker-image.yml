@@ -18,7 +18,7 @@ jobs:
       run: echo "=green" >> "$GITHUB_OUTPUT"
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag discord-bot:${{ date +%s }}
+      run: docker build . --file Dockerfile --tag discord-bot:${{ steps.date.outputs.date }}
 
     - name: Build the Docker image
-      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release discord-bot:${{ date +%s }}       
+      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release discord-bot:${{ steps.date.outputs.date }}       
