@@ -2,6 +2,7 @@ name: Docker Image CI
 
 on:  
   workflow_dispatch:
+
 jobs:
 
   build:
@@ -10,8 +11,6 @@ jobs:
 
     steps:
 
-    - env:
-        IMAGE_NAME: discord-bot:${{ date +%s }}
 
     - uses: actions/checkout@v3
 
@@ -19,7 +18,7 @@ jobs:
       run: echo "=green" >> "$GITHUB_OUTPUT"
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}
+      run: docker build . --file Dockerfile --tag discord-bot:${{ date +%s }}
 
     - name: Build the Docker image
-      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release ${{ env.IMAGE_NAME }}       
+      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release discord-bot:${{ date +%s }}       
