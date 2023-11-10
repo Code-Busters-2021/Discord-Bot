@@ -11,7 +11,7 @@ jobs:
     steps:
 
     - env:
-        IMAGE_NAME: discord-bot:${{ steps.date.outputs.date +%s }}
+        IMAGE_NAME: discord-bot:${{ date +%s }}
 
     - uses: actions/checkout@v3
 
