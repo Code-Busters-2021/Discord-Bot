@@ -14,9 +14,6 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - name: Set image name
-      run: echo "=green" >> "$GITHUB_OUTPUT"
-
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag discord-bot:${{ steps.date.outputs.date }}
 
