@@ -11,5 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
+    - name: Build the Docker image    
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        DOTNET_ENVIRONMENT: Release
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
