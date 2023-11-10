@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-
     - uses: actions/checkout@v3
+
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +%s)"
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag discord-bot:${{ steps.date.outputs.date }}
