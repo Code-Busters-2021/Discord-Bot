@@ -2,10 +2,6 @@ name: Docker Image CI
 
 on:  
   workflow_dispatch:
-
-env:
-  IMAGE_NAME: discord-bot:${{ steps.date.outputs.date +%s }}
-
 jobs:
 
   build:
@@ -13,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - env:
+        IMAGE_NAME: discord-bot:${{ steps.date.outputs.date +%s }}
+
     - uses: actions/checkout@v3
 
     - name: Set image name
