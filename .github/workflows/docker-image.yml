@@ -3,6 +3,9 @@ name: Docker Image CI
 on:  
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: discord-bot:$(date +%s)
+
 jobs:
 
   build:
@@ -11,10 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag discord-bot:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}
+
     - name: Run the Docker image    
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release discord-bot:$(date +%s)
+      run: docker run --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} --env DOTNET_ENVIRONMENT=Release ${{ env.IMAGE_NAME }}
        
