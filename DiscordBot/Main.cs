@@ -2,6 +2,8 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Core;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBot;
 
@@ -85,7 +87,10 @@ public class Program
     private async Task MainAsync()
     {
         // Login and connect.
-        await _client.LoginAsync(TokenType.Bot, _configuration["BotToken"]);
+        var token = _configuration["BotToken"] ?? Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN");
+        if (string.IsNullOrEmpty(token)) throw new Exception("Bot Token was not found");
+
+        await _client.LoginAsync(TokenType.Bot, token);
         await _client.StartAsync();
 
         await _services.GetRequiredService<InteractionMapper>()

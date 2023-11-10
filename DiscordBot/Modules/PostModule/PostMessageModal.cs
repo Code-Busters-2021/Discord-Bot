@@ -11,7 +11,7 @@ public class PostMessageModal : IModal
     [InputLabel("Contenu du message")]
     [ModalTextInput("message_content", TextInputStyle.Paragraph,
         "Bonjour,\nComme vous le savez tous ...\nC'est pour cela que ...\nAinsi ...")]
-    public string Contenu { get; set; }
+    public string Content { get; set; } = null!;
 
     public string Title => "Post";
 }

@@ -35,7 +35,9 @@ public class GradeModule : OverlayInteractionModuleBase<SocketInteractionContext
             return;
         }
 
-        if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id)))
+        // Can be used on designed roles, or on users who don't have any grade
+        if (!targetUser.Roles.Any(role => _canBeUsedOn.Contains(role.Id))
+            && targetUser.Roles.Intersect(GuildData.GradeRoles).Any())
         {
             await RespondAsync("You cannot use this command on this user", ephemeral: true);
             return;

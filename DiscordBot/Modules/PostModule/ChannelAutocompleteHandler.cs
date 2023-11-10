@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using DiscordBot.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBot.Modules.PostModule;
 

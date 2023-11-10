@@ -1,6 +1,7 @@
 using Discord;
 using Discord.WebSocket;
 using DiscordBot.Modules.SquadModule;
+using Microsoft.Extensions.Configuration;
 
 #pragma warning disable CS8618
 
@@ -44,7 +45,9 @@ public class GuildData
 
     private void ExtractRoles(IConfiguration configuration)
     {
-        _gradeRoles = configuration.GetSection("Grades").Get<string[]>()
+        var gradesRolesNames = configuration.GetSection("Grades").Get<string[]>()
+                               ?? throw new Exception("Roles not found in config");
+        _gradeRoles = gradesRolesNames
             .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
                                ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
     }

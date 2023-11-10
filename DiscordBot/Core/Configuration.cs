@@ -1,4 +1,5 @@
 using Discord;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
 namespace DiscordBot.Core;

@@ -1,6 +1,8 @@
 using Discord.Interactions;
 using DiscordBot.Modules.GradeModule;
 using DiscordBot.Modules.SquadModule;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBot.Core;
 

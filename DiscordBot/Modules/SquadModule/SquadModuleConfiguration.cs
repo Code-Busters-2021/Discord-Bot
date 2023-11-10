@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace DiscordBot.Modules.SquadModule;
 
@@ -11,6 +12,7 @@ public class SquadModuleConfiguration
 
     public static SquadModuleConfiguration Get(IConfiguration configuration)
     {
-        return configuration.GetSection("SquadModule").Get<SquadModuleConfiguration>();
+        return configuration.GetSection("SquadModule").Get<SquadModuleConfiguration>()
+               ?? throw new Exception("SquadModule not found in config");
     }
 }

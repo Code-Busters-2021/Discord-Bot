@@ -27,7 +27,7 @@ public class PostMessageModule : OverlayInteractionModuleBase<SocketInteractionC
     public async Task PostMessage(string channelId, PostMessageModal modal)
     {
         var textChannel = GuildData.Guild.GetTextChannel(ulong.Parse(channelId));
-        await textChannel.SendMessageAsync(modal.Contenu);
+        await textChannel.SendMessageAsync(modal.Content);
         await RespondAsync($"Le message a été posté sur le channel {textChannel.Name}", ephemeral: true);
     }
 }

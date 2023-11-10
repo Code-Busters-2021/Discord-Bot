@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace DiscordBot.Modules.SquadModule;
 
 public class SquadNameChecker

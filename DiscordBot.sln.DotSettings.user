@@ -1,9 +1,9 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=073eec66_002D409b_002D4910_002D9c6e_002D795518cb8d3d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Check_ShouldReturnCorrectly" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=073eec66_002D409b_002D4910_002D9c6e_002D795518cb8d3d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Check_ShouldReturnCorrectly" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::24A876F3-7A2F-45E7-8461-D1C81805A213::net6.0::UnitTests.SquadNameCheckerTests.Check_ShouldReturnCorrectly&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b7b308df_002Ddf15_002D4ffe_002Dbdbb_002Da81fb335d35b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from SquadNameCheckerTests.cs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b7b308df_002Ddf15_002D4ffe_002Dbdbb_002Da81fb335d35b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from SquadNameCheckerTests.cs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;ProjectFile&gt;24A876F3-7A2F-45E7-8461-D1C81805A213/f:SquadNameCheckerTests.cs&lt;/ProjectFile&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
