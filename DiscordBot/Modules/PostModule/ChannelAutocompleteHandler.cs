@@ -13,7 +13,8 @@ public class ChannelAutocompleteHandler : AutocompleteHandler
         var guildData = services.GetRequiredService<GuildData>();
 
         // Seul un moderateur peut poster dans le channel du bot
-        var isModerateur = guildData.ToGuildUser(context.User).Roles.Select(role => role.Name).Contains("Moderateur");
+        var isModerateur = guildData.ToGuildUser(context.User).Roles.Select(role => role.Id)
+            .Contains(guildData.ModerateurRole.Id);
         var channels = isModerateur ? guildData.PostChannels.Append(guildData.BotChannel) : guildData.PostChannels;
 
         // Create a collection with suggestions for autocomplete

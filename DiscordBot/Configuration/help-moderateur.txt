@@ -1,0 +1,11 @@
+Voici la liste des commandes pour les modérateurs
+
+/help-moderateur
+Obtenir la liste des commandes pour les modérateurs
+
+/grade *user* *grade*
+L'utilisateur se verra assigné le grade indiqué
+
+/squad *user* *squad*
+L'utilisateur se verra assigné à la squad indiquée
+Vous pouvez sélectionner une des squads, ou choisir 'Create a new squad' pour créer une nouvelle squad'

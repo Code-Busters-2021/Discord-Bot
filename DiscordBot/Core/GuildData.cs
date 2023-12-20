@@ -11,9 +11,11 @@ namespace DiscordBot.Core;
 public class GuildData
 {
     public IEnumerable<ITextChannel> PostChannels => _postChannels;
+    public ITextChannel BotChannel { get; private set; }
+    public ITextChannel SuggestionChannel { get; private set; }
     public IEnumerable<IRole> GradeRoles => _gradeRoles;
     public IEnumerable<IRole> SquadRoles => _squadRoles;
-    public ITextChannel BotChannel { get; private set; }
+    public IRole ModerateurRole { get; private set; }
 
     private readonly SocketSelfUser _clientCurrentUser;
     private readonly SquadNameChecker _squadNameChecker;
@@ -43,10 +45,14 @@ public class GuildData
             .Where(channel => postChannels.Contains(channel.Id))
             .ToList();
 
-        var botChannel = configuration.GetSection("BotChannel").Get<ulong>();
+        var botChannelId = configuration.GetSection("BotChannel").Get<ulong>();
         BotChannel = Guild.Channels
             .OfType<ITextChannel>()
-            .First(channel => botChannel == channel.Id);
+            .First(channel => botChannelId == channel.Id);
+        var suggestionChannelId = configuration.GetSection("SuggestionChannel").Get<ulong>();
+        SuggestionChannel = Guild.Channels
+            .OfType<ITextChannel>()
+            .First(channel => suggestionChannelId == channel.Id);
     }
 
     private void ExtractRoles(IConfiguration configuration)
@@ -56,6 +62,7 @@ public class GuildData
         _gradeRoles = gradesRolesNames
             .Select(section => Guild.Roles.FirstOrDefault(role => role.Name == section) as IRole
                                ?? throw new Exception($"Role not found in the guild: {section}")).ToList();
+        ModerateurRole = Guild.Roles.First(role => role.Name == "Moderateur");
     }
 
     public void ExtractSquads()

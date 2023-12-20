@@ -6,7 +6,7 @@ using Discord.WebSocket;
 using DiscordBot.Core;
 using DiscordBot.Modules.ModuleBase;
 
-namespace DiscordBot.Modules.NicknameModule;
+namespace DiscordBot.Modules.JokeModule;
 
 public class JokeModule : OverlayInteractionModuleBase<SocketInteractionContext>
 {
