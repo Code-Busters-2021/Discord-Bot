@@ -31,10 +31,9 @@ public abstract class OverlayInteractionModuleBase<T> : InteractionModuleBase<T>
 
     protected async Task RespondAndThrowIfUserDenied()
     {
-        var user = Context.User as SocketGuildUser ??
-                   GuildData.Guild.GetUser(Context.User.Id);
+        var user = GuildData.ToGuildUser(Context.User);
         if (IsUserAllowed(user)) return;
         await RespondAsync("You are not allowed to use this command", ephemeral: true);
-        throw new Exception();
+        throw new Exception("User was denied");
     }
 }

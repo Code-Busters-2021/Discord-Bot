@@ -13,6 +13,7 @@ public class GuildData
     public IEnumerable<ITextChannel> PostChannels => _postChannels;
     public IEnumerable<IRole> GradeRoles => _gradeRoles;
     public IEnumerable<IRole> SquadRoles => _squadRoles;
+    public ITextChannel BotChannel { get; private set; }
 
     private readonly SocketSelfUser _clientCurrentUser;
     private readonly SquadNameChecker _squadNameChecker;
@@ -41,6 +42,11 @@ public class GuildData
             .OfType<ITextChannel>()
             .Where(channel => postChannels.Contains(channel.Id))
             .ToList();
+
+        var botChannel = configuration.GetSection("BotChannel").Get<ulong>();
+        BotChannel = Guild.Channels
+            .OfType<ITextChannel>()
+            .First(channel => botChannel == channel.Id);
     }
 
     private void ExtractRoles(IConfiguration configuration)
@@ -59,6 +65,9 @@ public class GuildData
             if (_squadNameChecker.CheckName(role.Name))
                 _squadRoles.Add(role);
     }
+
+    public SocketGuildUser ToGuildUser(IUser user)
+        => user as SocketGuildUser ?? Guild.GetUser(user.Id);
 }
 
 #pragma warning restore CS8618

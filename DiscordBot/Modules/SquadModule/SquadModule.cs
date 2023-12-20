@@ -33,8 +33,7 @@ public class SquadModule : OverlayInteractionModuleBase<SocketInteractionContext
     {
         await RespondAndThrowIfUserDenied();
 
-        var targetUser = user as SocketGuildUser ??
-                         GuildData.Guild.GetUser(user.Id);
+        var targetUser = GuildData.ToGuildUser(user);
 
         if (targetUser.GuildPermissions.Administrator)
         {

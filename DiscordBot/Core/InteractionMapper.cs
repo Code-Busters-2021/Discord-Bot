@@ -48,7 +48,7 @@ public class InteractionMapper
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            await Program.Log(new LogMessage(LogSeverity.Error, interaction.Type.ToString(), ex.Message, ex));
             // if a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
             // response, or at least let the user know that something went wrong during the command execution.
             if (interaction.Type == InteractionType.ApplicationCommand)
