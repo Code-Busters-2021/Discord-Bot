@@ -5,7 +5,7 @@ Obtenir la liste des commandes
 
 /post *channel*
 Poster anonymement un message dans le channel indiqué (il faut sélectionner un des channels proposés dans la barre d'autocompletion)
-Vous pourrez taper votre message dans le popup qui va poper.
+Vous pourrez taper votre message dans le popup qui va poper
 
 /joke
 Poulpy va vous raconter une blague hilarante (attention vous n'etes pas prets)

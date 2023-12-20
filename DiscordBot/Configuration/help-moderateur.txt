@@ -8,4 +8,4 @@ L'utilisateur se verra assigné le grade indiqué
 
 /squad *user* *squad*
 L'utilisateur se verra assigné à la squad indiquée
-Vous pouvez sélectionner une des squads, ou choisir 'Create a new squad' pour créer une nouvelle squad'
+Vous pouvez sélectionner une squads éxistante, ou choisir 'Create a new squad' pour créer une nouvelle squad
